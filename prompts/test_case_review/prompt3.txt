@@ -1,0 +1,10 @@
+Analyze the provided set of test cases to identify any redundant tests or significant missing test scenarios.
+Explain why a test is considered redundant or why a missing scenario is important.
+Suggest how to consolidate redundant tests or outline the missing ones.
+If custom rules are provided, consider them in your analysis.
+
+Test Cases:
+{{USER_INPUT}}
+
+Custom Rules (if any):
+{{CUSTOM_RULES}} 

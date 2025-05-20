@@ -1,0 +1,10 @@
+Evaluate the testability of the following requirements.
+For each requirement, assess if clear acceptance criteria can be derived.
+Identify any requirements that are difficult to test and explain why. Suggest modifications to improve their testability.
+If custom rules are provided, apply them to your evaluation.
+
+Requirements:
+{{USER_INPUT}}
+
+Custom Rules (if any):
+{{CUSTOM_RULES}} 

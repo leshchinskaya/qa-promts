@@ -1,0 +1,10 @@
+Based on the following requirements, generate a set of negative test cases.
+These test cases should verify how the system handles invalid input, error conditions, and unexpected user behavior.
+Output the test cases in CSV format with the following columns: "Test Case ID", "Description", "Steps to Reproduce", "Expected Result" (e.g., error message, graceful failure).
+If custom rules are provided, ensure the test cases align with them.
+
+Requirements:
+{{USER_INPUT}}
+
+Custom Rules (if any):
+{{CUSTOM_RULES}} 

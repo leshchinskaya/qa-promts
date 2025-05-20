@@ -1,0 +1,10 @@
+Based on the following requirements, develop a set of exploratory testing charters.
+Each charter should define a mission, scope, and specific areas to explore or questions to answer.
+Focus on uncovering unexpected behavior and usability issues.
+If custom rules are provided, they should influence the focus of the charters.
+
+Requirements:
+{{USER_INPUT}}
+
+Custom Rules (if any):
+{{CUSTOM_RULES}} 

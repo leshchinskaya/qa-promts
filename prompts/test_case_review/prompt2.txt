@@ -1,0 +1,11 @@
+Review the provided test cases for clarity, atomicity, and correctness of expected results.
+Ensure that test steps are unambiguous and easy to follow.
+Verify that expected results are specific and verifiable.
+Provide feedback on how to improve the quality of the test cases.
+If custom rules are provided, apply them during your review.
+
+Test Cases:
+{{USER_INPUT}}
+
+Custom Rules (if any):
+{{CUSTOM_RULES}} 

@@ -1,0 +1,9 @@
+Analyze the following requirements for overall quality. Focus on clarity, completeness, consistency, testability, and unambiguity.
+Provide detailed feedback on any identified issues, ambiguities, or areas for improvement.
+If custom rules are provided, ensure your analysis explicitly considers them.
+
+Requirements:
+{{USER_INPUT}}
+
+Custom Rules (if any):
+{{CUSTOM_RULES}} 

@@ -1,0 +1,9 @@
+Review the following requirements specifically to identify ambiguities, contradictions, and missing information.
+List each finding clearly and suggest questions to clarify them or information that needs to be added.
+If custom rules are provided, incorporate them into your review.
+
+Requirements:
+{{USER_INPUT}}
+
+Custom Rules (if any):
+{{CUSTOM_RULES}} 

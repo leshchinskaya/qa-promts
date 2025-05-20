@@ -1,0 +1,10 @@
+Analyze the following requirements to identify potential risks, failure points, and edge cases.
+Consider security, performance, usability, and integration aspects.
+For each identified risk or edge case, describe its potential impact.
+If custom rules are provided, use them to guide your risk assessment.
+
+Requirements:
+{{USER_INPUT}}
+
+Custom Rules (if any):
+{{CUSTOM_RULES}} 
