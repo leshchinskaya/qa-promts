@@ -9,6 +9,7 @@ Your task is to conduct an expert analysis of the provided test cases for their 
 
 ---
 ## 1. User Task
+Test Cases:
 {{USER_INPUT}}
 - Check that the steps of the test cases are unambiguous and easily reproducible.
 - Ensure that the expected results are specific and verifiable.
@@ -24,7 +25,8 @@ Your task is to conduct an expert analysis of the provided test cases for their 
 
 ---
 ## 3. User Rules
-- Apply custom rules from {{CUSTOM_RULES}} if specified.
+Custom Rules (if any):
+{{CUSTOM_RULES}} 
 
 ---
 ## 4. Output Format & Constraints (MANDATORY & STRICT):

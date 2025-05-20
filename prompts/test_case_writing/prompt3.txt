@@ -9,6 +9,7 @@ You are a Senior QA Engineer. Your task is to analyze the requirements to identi
 
 ---
 ## 1. User Task
+Requirements:
 {{USER_INPUT}}
 - Analyze the requirements and determine where boundary value and equivalence partitioning techniques apply.
 - Generate test cases covering these areas.

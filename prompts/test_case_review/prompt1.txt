@@ -9,6 +9,7 @@ Your task is to act as a Senior QA Analyst. The main goal is to analyze the prov
 
 ---
 ## 1. User Task
+Test Cases / Requirements:
 {{USER_INPUT}}
 - Analyze the test cases for compliance with the requirements.
 - Determine whether all requirements are covered by tests and identify any gaps.
@@ -25,7 +26,8 @@ Your task is to act as a Senior QA Analyst. The main goal is to analyze the prov
 
 ---
 ## 3. User Rules
-{{CUSTOM_RULES}}
+Custom Rules (if any):
+{{CUSTOM_RULES}} 
 
 ---
 ## 4. Output Format & Constraints (MANDATORY & STRICT):

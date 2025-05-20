@@ -9,6 +9,7 @@ Your task is to evaluate the structure, organization, and maintainability of the
 
 ---
 ## 1. User Task
+Test Cases:
 {{USER_INPUT}}
 - Provide recommendations for improving structure, naming, test data management, and step reuse.
 - Assess compliance with best test design practices.
@@ -23,7 +24,8 @@ Your task is to evaluate the structure, organization, and maintainability of the
 
 ---
 ## 3. User Rules
-- Apply custom rules from {{CUSTOM_RULES}} if specified.
+Custom Rules (if any):
+{{CUSTOM_RULES}} 
 
 ---
 ## 4. Output Format & Constraints (MANDATORY & STRICT):

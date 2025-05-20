@@ -9,6 +9,7 @@ You are a Senior QA Engineer. Your task is to create a set of positive test case
 
 ---
 ## 1. User Task
+Requirements:
 {{USER_INPUT}}
 - Analyze the provided requirements.
 - Generate positive test cases that cover the main usage scenarios.
