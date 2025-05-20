@@ -142,6 +142,7 @@ button:hover {
     align-items: center;
     margin-bottom: 5px; /* Space between file input controls and textarea */
     flex-wrap: wrap;
+    gap: 8px;
 }
 
 .file-upload-controls input[type="file"] {
@@ -152,7 +153,7 @@ button:hover {
 }
 
 .clear-file-btn {
-    padding: 4px 10px;
+    padding: 2px 8px;
     font-size: 0.85em;
     background-color: #6c757d;
     color: white;
@@ -160,7 +161,11 @@ button:hover {
     border-radius: 4px;
     cursor: pointer;
     margin-right: 8px;
-    margin-bottom: 5px; /* For wrapping */
+    margin-bottom: 5px;
+    width: auto;
+    min-width: unset;
+    display: inline-block;
+    box-sizing: border-box;
 }
 
 .clear-file-btn:hover {
@@ -174,4 +179,52 @@ button:hover {
     margin-left: 5px; /* For loading indicator if it's next to button */
     margin-bottom: 5px; /* For wrapping */
     color: #555;
+}
+
+.load-base-rules-btn {
+    width: auto;
+    padding: 4px 10px;
+    font-size: 0.85em;
+    margin-top: 2px;
+    margin-bottom: 10px;
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.load-base-rules-btn:hover {
+    background-color: #138496;
+    transform: translateY(-1px); /* Subtle lift */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow */
+}
+
+.file-upload-btn {
+    cursor: pointer;
+    margin-right: 8px;
+    margin-bottom: 5px;
+    display: inline-block;
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 0.85em;
+    transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    vertical-align: middle;
+}
+
+.file-upload-btn:hover {
+    background-color: #138496;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.file-upload-btn svg {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
 } 

@@ -147,14 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         let finalPrompt = template.replace('{{USER_INPUT}}', userInput);
         if (customRules) {
-            finalPrompt.replace('{{CUSTOM_RULES}}', customRules);
-        }
-        else {
-            // Если кастомных правил нет, удаляем секцию или заменяем на "None"
-            // Простой вариант: заменить {{CUSTOM_RULES}} на "None" или пустую строку
-            // Более сложный: удалить всю секцию "Custom Rules (if any): ..." если она пуста
-            finalPrompt = finalPrompt.replace('Custom Rules (if any):\n{{CUSTOM_RULES}}', customRules ? `Custom Rules:\n${customRules}` : 'Custom Rules: None');
-            finalPrompt = finalPrompt.replace('{{CUSTOM_RULES}}', 'None'); // На случай если шаблон другой
+            finalPrompt = finalPrompt.replace('Custom Rules (if any):\n{{CUSTOM_RULES}}', `Custom Rules:\n${customRules}`);
+            finalPrompt = finalPrompt.replace('{{CUSTOM_RULES}}', customRules);
+        } else {
+            finalPrompt = finalPrompt.replace('Custom Rules (if any):\n{{CUSTOM_RULES}}', 'Custom Rules: None');
+            finalPrompt = finalPrompt.replace('{{CUSTOM_RULES}}', 'None');
         }
         generatedPromptTextarea.value = finalPrompt;
     }
@@ -255,7 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset UI elements for this input
         targetTextarea.value = '';
         fileNameDisplay.textContent = '';
-        clearButton.style.display = 'none';
         loadingIndicator.textContent = '';
         loadingIndicator.style.display = 'none';
         loadingIndicator.style.color = '#007bff'; // Reset color
@@ -298,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
             targetTextarea.value = content;
             fileNameDisplay.textContent = `Loaded: ${fileName}`;
             fileNameDisplay.style.display = 'block';
-            clearButton.style.display = 'inline-block';
             loadingIndicator.textContent = '';
             loadingIndicator.style.display = 'none';
             generateAndDisplayPrompt();
@@ -307,7 +302,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error processing file:', error);
             targetTextarea.value = '';
             fileNameDisplay.textContent = '';
-            clearButton.style.display = 'none';
             loadingIndicator.textContent = `Error: ${error.message || 'Could not process file.'}`;
             loadingIndicator.style.color = 'red';
             fileInput.value = null; // Clear the file input
@@ -321,7 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
             targetTextarea.value = '';
             fileNameDisplay.textContent = '';
             fileNameDisplay.style.display = 'none';
-            clearButton.style.display = 'none';
             loadingIndicator.textContent = '';
             loadingIndicator.style.display = 'none';
             generateAndDisplayPrompt();
@@ -341,6 +334,28 @@ document.addEventListener('DOMContentLoaded', () => {
         var refreshBtn = document.getElementById('refreshPromptBtn');
         if (refreshBtn) {
             refreshBtn.addEventListener('click', generateAndDisplayPrompt);
+        }
+    });
+
+    const loadBaseRulesBtn = document.getElementById('loadBaseRulesBtn');
+    // Event listener for loading base rules
+    loadBaseRulesBtn.addEventListener('click', async () => {
+        try {
+            const response = await fetch('rules/base_rules.txt');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status} for rules/base_rules.txt`);
+            }
+            const baseRulesText = await response.text();
+            if (customRulesTextarea.value.trim()) {
+                customRulesTextarea.value += '\n' + baseRulesText;
+            } else {
+                customRulesTextarea.value = baseRulesText;
+            }
+            generateAndDisplayPrompt(); // Update the main prompt
+        } catch (error) {
+            console.error('Error loading base rules:', error);
+            // Optionally, display an error to the user in the UI
+            customRulesTextarea.value = `Ошибка загрузки базовых правил: ${error.message}`;
         }
     });
 });

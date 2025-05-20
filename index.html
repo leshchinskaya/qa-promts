@@ -33,8 +33,9 @@
                 <div class="form-group">
                     <label for="userInput">Входные данные:</label>
                     <div class="file-upload-controls">
-                        <input type="file" id="userInputFile" accept=".pdf,.doc,.docx,.csv">
-                        <button type="button" id="clearUserInputFile" class="clear-file-btn" style="display:none;">Очистить</button>
+                        <input type="file" id="userInputFile" accept=".pdf,.doc,.docx,.csv" style="display:none;">
+                        <label for="userInputFile" class="file-upload-btn load-base-rules-btn">Выберите файл</label>
+                        <button type="button" id="clearUserInputFile" class="clear-file-btn">Очистить</button>
                         <span id="userInputFileLoading" class="loading-indicator" style="display:none;"></span>
                     </div>
                     <span id="userInputFileName" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
@@ -43,9 +44,11 @@
 
                 <div class="form-group">
                     <label for="customRules">Кастомные правила (опционально):</label>
-                    <div class="file-upload-controls">
-                        <input type="file" id="customRulesFile" accept=".pdf,.doc,.docx,.csv">
-                        <button type="button" id="clearCustomRulesFile" class="clear-file-btn" style="display:none;">Очистить</button>
+                    <div class="file-upload-controls" style="gap: 8px; flex-wrap: wrap;">
+                        <input type="file" id="customRulesFile" accept=".pdf,.doc,.docx,.csv" style="display:none;">
+                        <label for="customRulesFile" class="file-upload-btn load-base-rules-btn">Выберите файл</label>
+                        <button type="button" id="loadBaseRulesBtn" class="file-upload-btn load-base-rules-btn">Загрузить базовые правила</button>
+                        <button type="button" id="clearCustomRulesFile" class="clear-file-btn">Очистить</button>
                         <span id="customRulesFileLoading" class="loading-indicator" style="display:none;"></span>
                     </div>
                     <span id="customRulesFileName" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
@@ -55,18 +58,42 @@
 
             <div class="output-panel">
                 <div class="form-group">
-                    <label for="generatedPrompt" style="display: flex; align-items: center; gap: 8px;">
-                        Готовый промт:
-                        <button id="refreshPromptBtn" type="button" title="Обновить промт" style="background: none; border: none; cursor: pointer; padding: 0; margin-left: 4px; display: flex; align-items: center;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2v2a6 6 0 1 1-6 6H2a8 8 0 1 0 8-8z" fill="#555"/><path d="M2 2v6h6" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
+                    <label for="generatedPrompt" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <span>Готовый промт:</span>
+                        <!-- <button id="refreshPromptBtn" type="button" class="file-upload-btn load-base-rules-btn" title="Обновить промт">Обновить</button> -->
                     </label>
                     <textarea id="generatedPrompt" readonly placeholder="Здесь появится сгенерированный промпт..."></textarea>
                 </div>
 
                 <button id="copyBtn">Копировать промт</button>
                 <p id="copyFeedback" style="text-align: center; color: green; display: none;">Скопировано!</p>
-                <p style="margin-top: 10px; color: #555; font-size: 15px; text-align: left;">Скопируйте промт и переходите в чат, например: <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer">https://aistudio.google.com/</a></p>
+                <p style="margin-top: 10px; color: #555; font-size: 15px; text-align: left;">Скопируйте промт и переходите в чат, например:</p>
+                <ul class="service-list">
+                    <li>
+                        Google AI Studio – 
+                        <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer">
+                            https://aistudio.google.com/
+                        </a>
+                      </li>
+                    <li>
+                        Grok – 
+                        <a href="https://grok.com/" target="_blank" rel="noopener noreferrer">
+                          https://grok.com/
+                        </a>
+                      </li>
+                      <li>
+                        ChatGPT – 
+                        <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">
+                          https://chatgpt.com/
+                        </a>
+                      </li>
+                      <li>
+                        Qwen – 
+                        <a href="https://chat.qwen.ai/" target="_blank" rel="noopener noreferrer">
+                          https://chat.qwen.ai/
+                        </a>
+                      </li>
+                  </ul>
             </div>
         </div>
     </div>
