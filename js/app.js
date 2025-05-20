@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const promptTypeSelect = document.getElementById('promptType');
     const userInputTextarea = document.getElementById('userInput');
     const customRulesTextarea = document.getElementById('customRules');
-    const generateBtn = document.getElementById('generateBtn');
     const generatedPromptTextarea = document.getElementById('generatedPrompt');
     const copyBtn = document.getElementById('copyBtn');
     const copyFeedback = document.getElementById('copyFeedback');
@@ -100,8 +99,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Обработчик изменения темы
-    promptThemeSelect.addEventListener('change', populatePromptTypes);
+    // Debounce utility function
+    function debounce(func, delay) {
+        let timeoutId;
+        return function(...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
 
     // Функция для загрузки шаблона промпта
     async function fetchPromptTemplate(themeKey, typeKey) {
@@ -129,40 +134,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Обработчик нажатия кнопки "Сгенерировать промт"
-    generateBtn.addEventListener('click', async () => {
+    // Function to generate and display the prompt
+    async function generateAndDisplayPrompt() {
         const themeKey = promptThemeSelect.value;
         const typeKey = promptTypeSelect.value;
         const userInput = userInputTextarea.value.trim();
         const customRules = customRulesTextarea.value.trim();
-
-        if (!themeKey || !typeKey) {
-            generatedPromptTextarea.value = 'Пожалуйста, выберите тему и тип промта.';
-            return;
-        }
-        if (!userInput) {
-            generatedPromptTextarea.value = 'Пожалуйста, введите входные данные.';
-            return;
-        }
-
         const template = await fetchPromptTemplate(themeKey, typeKey);
-        if (template) {
-            let finalPrompt = template.replace('{{USER_INPUT}}', userInput);
-            if (customRules) {
-                finalPrompt = finalPrompt.replace('{{CUSTOM_RULES}}', customRules);
-            } else {
-                // Если кастомных правил нет, удаляем секцию или заменяем на "None"
-                // Простой вариант: заменить {{CUSTOM_RULES}} на "None" или пустую строку
-                // Более сложный: удалить всю секцию "Custom Rules (if any): ..." если она пуста
-                finalPrompt = finalPrompt.replace('Custom Rules (if any):\n{{CUSTOM_RULES}}', customRules ? `Custom Rules:\n${customRules}` : 'Custom Rules: None');
-                finalPrompt = finalPrompt.replace('{{CUSTOM_RULES}}', 'None'); // На случай если шаблон другой
-            }
-            generatedPromptTextarea.value = finalPrompt;
+        if (!template) {
+            generatedPromptTextarea.value = 'Пожалуйста, выберите тип задачи и детали задачи.';
+            return;
         }
+        let finalPrompt = template.replace('{{USER_INPUT}}', userInput);
+        if (customRules) {
+            finalPrompt.replace('{{CUSTOM_RULES}}', customRules);
+        }
+        else {
+            // Если кастомных правил нет, удаляем секцию или заменяем на "None"
+            // Простой вариант: заменить {{CUSTOM_RULES}} на "None" или пустую строку
+            // Более сложный: удалить всю секцию "Custom Rules (if any): ..." если она пуста
+            finalPrompt = finalPrompt.replace('Custom Rules (if any):\n{{CUSTOM_RULES}}', customRules ? `Custom Rules:\n${customRules}` : 'Custom Rules: None');
+            finalPrompt = finalPrompt.replace('{{CUSTOM_RULES}}', 'None'); // На случай если шаблон другой
+        }
+        generatedPromptTextarea.value = finalPrompt;
+    }
+
+    // Обработчик изменения темы
+    promptThemeSelect.addEventListener('change', () => {
+        populatePromptTypes();
+        generateAndDisplayPrompt();
     });
+
+    // Обработчик изменения типа промпта
+    promptTypeSelect.addEventListener('change', generateAndDisplayPrompt);
+
+    // Обработчики ввода текста с debounce
+    userInputTextarea.addEventListener('input', debounce(generateAndDisplayPrompt, 400));
+    customRulesTextarea.addEventListener('input', debounce(generateAndDisplayPrompt, 400));
 
     // Обработчик нажатия кнопки "Копировать промт"
     copyBtn.addEventListener('click', () => {
+        generateAndDisplayPrompt();
         generatedPromptTextarea.select();
         document.execCommand('copy');
         copyFeedback.style.display = 'block';
@@ -171,8 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 2000);
     });
 
-    // Инициализация типов промптов при загрузке (если тема уже выбрана, например, из localStorage в будущем)
+    // Инициализация типов промптов и первоначальная генерация промпта при загрузке
     populatePromptTypes();
+    generateAndDisplayPrompt(); // Initial call to display prompt or placeholder
 
     // Setup PDF.js worker
     if (window.pdfjsLib) {
@@ -248,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingIndicator.style.color = '#007bff'; // Reset color
 
         if (!file) {
+            generateAndDisplayPrompt();
             return;
         }
 
@@ -264,6 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingIndicator.textContent = `Error: Unsupported file type (.${fileExtension}). Supported: ${supportedExtensions.join(', ')}`;
             loadingIndicator.style.color = 'red';
             fileInput.value = null; // Clear the file input
+            generateAndDisplayPrompt();
             return;
         }
 
@@ -286,6 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearButton.style.display = 'inline-block';
             loadingIndicator.textContent = '';
             loadingIndicator.style.display = 'none';
+            generateAndDisplayPrompt();
 
         } catch (error) {
             console.error('Error processing file:', error);
@@ -295,6 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingIndicator.textContent = `Error: ${error.message || 'Could not process file.'}`;
             loadingIndicator.style.color = 'red';
             fileInput.value = null; // Clear the file input
+            generateAndDisplayPrompt();
         }
     }
 
@@ -307,6 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearButton.style.display = 'none';
             loadingIndicator.textContent = '';
             loadingIndicator.style.display = 'none';
+            generateAndDisplayPrompt();
         });
     }
 
@@ -317,4 +335,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add event listeners for clear buttons
     setupClearButtonListener(clearUserInputFileBtn, userInputFile, userInputTextarea, userInputFileName, userInputFileLoading);
     setupClearButtonListener(clearCustomRulesFileBtn, customRulesFile, customRulesTextarea, customRulesFileName, customRulesFileLoading);
-}); 
+
+    // После определения функции generateAndDisplayPrompt и после загрузки DOM
+    document.addEventListener('DOMContentLoaded', function() {
+        var refreshBtn = document.getElementById('refreshPromptBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', generateAndDisplayPrompt);
+        }
+    });
+});
