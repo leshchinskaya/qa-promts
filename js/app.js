@@ -8,6 +8,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyBtn = document.getElementById('copyBtn');
     const copyFeedback = document.getElementById('copyFeedback');
 
+    // File input related elements
+    const userInputFile = document.getElementById('userInputFile');
+    const userInputFileName = document.getElementById('userInputFileName');
+    const clearUserInputFileBtn = document.getElementById('clearUserInputFile');
+    const userInputFileLoading = document.getElementById('userInputFileLoading');
+
+    const customRulesFile = document.getElementById('customRulesFile');
+    const customRulesFileName = document.getElementById('customRulesFileName');
+    const clearCustomRulesFileBtn = document.getElementById('clearCustomRulesFile');
+    const customRulesFileLoading = document.getElementById('customRulesFileLoading');
+
     const promptTemplatesBaseDir = 'prompts';
 
     // Определяем темы и количество типов промптов для каждой
@@ -19,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { value: 'prompt1', display: 'Для базового анализа требований' },
                 { value: 'prompt2', display: 'Для детального разбора спецификаций' },
                 { value: 'prompt3', display: 'Для выявления неполноты и противоречий' },
-                { value: 'prompt4', display: 'Для генерации вопросов к заказчику' }
+                { value: 'prompt4', display: 'Для генерации вопросов к заказчику или аналитику' }
             ]
         },
         test_case_writing: {
@@ -162,4 +173,148 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Инициализация типов промптов при загрузке (если тема уже выбрана, например, из localStorage в будущем)
     populatePromptTypes();
+
+    // Setup PDF.js worker
+    if (window.pdfjsLib) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+    }
+
+    // --- File Processing Logic ---
+
+    function readFileAsText(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(reader.error);
+            reader.readAsText(file);
+        });
+    }
+
+    function readFileAsArrayBuffer(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(reader.error);
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    function parseCsvContent(textContent) {
+        // For now, just return the text content.
+        // Future: could parse CSV into a more structured format if needed.
+        return textContent;
+    }
+
+    async function parsePdfContent(arrayBuffer) {
+        if (!window.pdfjsLib) {
+            throw new Error('PDF.js library is not loaded.');
+        }
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let fullText = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            fullText += textContent.items.map(item => item.str).join(' ') + '\n';
+        }
+        return fullText.trim();
+    }
+
+    async function parseDocxContent(arrayBuffer, fileExtension) {
+        if (!window.mammoth) {
+            throw new Error('Mammoth.js library is not loaded.');
+        }
+        try {
+            const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+            return result.value;
+        } catch (err) {
+            console.error("Mammoth.js error:", err);
+            if (fileExtension === 'doc') {
+                throw new Error(`Failed to parse .doc file. Mammoth.js primarily supports .docx. Consider converting to .docx. (Error: ${err.message})`);
+            }
+            throw new Error(`Failed to parse .docx file. (Error: ${err.message})`);
+        }
+    }
+
+    async function handleFileSelect(event, targetTextarea, fileNameDisplay, clearButton, loadingIndicator) {
+        const fileInput = event.target;
+        const file = fileInput.files[0];
+
+        // Reset UI elements for this input
+        targetTextarea.value = '';
+        fileNameDisplay.textContent = '';
+        clearButton.style.display = 'none';
+        loadingIndicator.textContent = '';
+        loadingIndicator.style.display = 'none';
+        loadingIndicator.style.color = '#007bff'; // Reset color
+
+        if (!file) {
+            return;
+        }
+
+        console.log('Selected file:', { name: file.name, type: file.type, size: file.size }); // Task 1.3
+
+        loadingIndicator.textContent = 'Processing...';
+        loadingIndicator.style.display = 'inline';
+
+        const fileName = file.name;
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+        const supportedExtensions = ['csv', 'pdf', 'docx', 'doc'];
+
+        if (!supportedExtensions.includes(fileExtension)) {
+            loadingIndicator.textContent = `Error: Unsupported file type (.${fileExtension}). Supported: ${supportedExtensions.join(', ')}`;
+            loadingIndicator.style.color = 'red';
+            fileInput.value = null; // Clear the file input
+            return;
+        }
+
+        try {
+            let content = '';
+            if (fileExtension === 'csv') {
+                const textContent = await readFileAsText(file);
+                content = parseCsvContent(textContent);
+            } else if (fileExtension === 'pdf') {
+                const arrayBuffer = await readFileAsArrayBuffer(file);
+                content = await parsePdfContent(arrayBuffer);
+            } else if (fileExtension === 'docx' || fileExtension === 'doc') {
+                const arrayBuffer = await readFileAsArrayBuffer(file);
+                content = await parseDocxContent(arrayBuffer, fileExtension);
+            }
+
+            targetTextarea.value = content;
+            fileNameDisplay.textContent = `Loaded: ${fileName}`;
+            fileNameDisplay.style.display = 'block';
+            clearButton.style.display = 'inline-block';
+            loadingIndicator.textContent = '';
+            loadingIndicator.style.display = 'none';
+
+        } catch (error) {
+            console.error('Error processing file:', error);
+            targetTextarea.value = '';
+            fileNameDisplay.textContent = '';
+            clearButton.style.display = 'none';
+            loadingIndicator.textContent = `Error: ${error.message || 'Could not process file.'}`;
+            loadingIndicator.style.color = 'red';
+            fileInput.value = null; // Clear the file input
+        }
+    }
+
+    function setupClearButtonListener(clearButton, fileInput, targetTextarea, fileNameDisplay, loadingIndicator) {
+        clearButton.addEventListener('click', () => {
+            fileInput.value = null;
+            targetTextarea.value = '';
+            fileNameDisplay.textContent = '';
+            fileNameDisplay.style.display = 'none';
+            clearButton.style.display = 'none';
+            loadingIndicator.textContent = '';
+            loadingIndicator.style.display = 'none';
+        });
+    }
+
+    // Add event listeners for file inputs
+    userInputFile.addEventListener('change', (event) => handleFileSelect(event, userInputTextarea, userInputFileName, clearUserInputFileBtn, userInputFileLoading));
+    customRulesFile.addEventListener('change', (event) => handleFileSelect(event, customRulesTextarea, customRulesFileName, clearCustomRulesFileBtn, customRulesFileLoading));
+
+    // Add event listeners for clear buttons
+    setupClearButtonListener(clearUserInputFileBtn, userInputFile, userInputTextarea, userInputFileName, userInputFileLoading);
+    setupClearButtonListener(clearCustomRulesFileBtn, customRulesFile, customRulesTextarea, customRulesFileName, customRulesFileLoading);
 }); 

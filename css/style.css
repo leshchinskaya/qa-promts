@@ -135,4 +135,43 @@ button:hover {
     .output-panel {
         padding: 20px;
     }
+}
+
+.file-upload-controls {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px; /* Space between file input controls and textarea */
+    flex-wrap: wrap;
+}
+
+.file-upload-controls input[type="file"] {
+    flex-grow: 1;
+    min-width: 150px; /* Ensure it doesn't get too small */
+    margin-right: 8px;
+    margin-bottom: 5px; /* For wrapping */
+}
+
+.clear-file-btn {
+    padding: 4px 10px;
+    font-size: 0.85em;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 8px;
+    margin-bottom: 5px; /* For wrapping */
+}
+
+.clear-file-btn:hover {
+    background-color: #5a6268;
+    transform: none; /* Override general button hover if needed */
+    box-shadow: none; /* Override general button hover if needed */
+}
+
+.loading-indicator, .file-name-display {
+    font-size: 0.9em;
+    margin-left: 5px; /* For loading indicator if it's next to button */
+    margin-bottom: 5px; /* For wrapping */
+    color: #555;
 } 
