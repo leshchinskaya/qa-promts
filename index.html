@@ -35,19 +35,23 @@
                 <div class="form-group">
                     <label for="userInput">Входные данные:</label>
                     <div class="file-upload-controls">
-                        <input type="file" id="userInputFile" accept=".pdf,.doc,.docx,.csv" style="display:none;">
-                        <label for="userInputFile" class="file-upload-btn load-base-rules-btn">Выберите файл</label>
-                        <button type="button" id="clearUserInputFile" class="clear-file-btn">Очистить</button>
+                        <input type="file" id="userInputFile" accept=".pdf,.doc,.docx,.csv,.txt" style="display:none;">
+                        <label for="userInputFile" class="file-upload-btn load-base-rules-btn">Добавить файл</label>
+                        <button type="button" id="clearUserInputFile" class="clear-file-btn">Очистить все</button>
                         <span id="userInputFileLoading" class="loading-indicator" style="display:none;"></span>
                     </div>
                     <span id="userInputFileName" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
                     <textarea id="userInput" placeholder="Добавьте входные данные, например: требования, список багов, проверки и т.д."></textarea>
                 </div>
+                <div class="context-files-block">
+                    <div class="context-files-title">Загруженные файлы</div>
+                    <div id="userInputFileListContainer"></div>
+                </div>
 
                 <div class="form-group">
                     <label for="customRules">Кастомные правила (опционально):</label>
                     <div class="file-upload-controls" style="gap: 8px; flex-wrap: wrap;">
-                        <input type="file" id="customRulesFile" accept=".pdf,.doc,.docx,.csv" style="display:none;">
+                        <input type="file" id="customRulesFile" accept=".pdf,.doc,.docx,.csv,.txt" style="display:none;">
                         <label for="customRulesFile" class="file-upload-btn load-base-rules-btn">Выберите файл</label>
                         <button type="button" id="loadBaseRulesBtn" class="file-upload-btn load-base-rules-btn">Загрузить базовые правила</button>
                         <button type="button" id="clearCustomRulesFile" class="clear-file-btn">Очистить</button>
@@ -62,11 +66,9 @@
                 <div class="form-group">
                     <label for="generatedPrompt" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                         <span>Готовый промт:</span>
-                        <!-- <button id="refreshPromptBtn" type="button" class="file-upload-btn load-base-rules-btn" title="Обновить промт">Обновить</button> -->
                     </label>
                     <textarea id="generatedPrompt" readonly placeholder="Здесь появится сгенерированный промпт, выберите тип задачи и детали задачи, добавьте входные данные и кастомные правила"></textarea>
                 </div>
-
                 <button id="copyBtn">Копировать промт</button>
                 <p id="copyFeedback" style="text-align: center; color: green; display: none;">Скопировано!</p>
                 <p style="margin-top: 10px; color: #555; font-size: 15px; text-align: left;">Скопируйте промт и переходите в чат, например:</p>

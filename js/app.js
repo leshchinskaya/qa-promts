@@ -20,17 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const promptTemplatesBaseDir = 'prompts';
 
+    const userInputFileListContainer = document.getElementById('userInputFileListContainer');
+    let uploadedUserInputFiles = [];
+
     // Определяем темы и количество типов промптов для каждой
     const promptThemes = {
-        project_test_analysis: {
-            name: 'Анализ тестирования на проекте',
-            path: 'project_test_analysis',
-            promptTypes: [
-                { value: 'prompt1', display: 'Анализ багов' },
-                { value: 'prompt2', display: 'Анализ нагрузки команды' },
-                { value: 'prompt3', display: 'Анализ общего качества на проекте' }
-            ]
-        },
         requirements_analysis: {
             name: 'Анализ требований',
             path: 'requirements_analysis',
@@ -69,6 +63,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 { value: 'prompt2', display: 'Анализ на SQL-инъекции и XSS' },
                 { value: 'prompt3', display: 'Проверка аутентификации и авторизации' },
                 { value: 'prompt4', display: 'Поиск небезопасных конфигураций' }
+            ]
+        },
+        project_test_analysis: {
+            name: 'Анализ тестирования на проекте',
+            path: 'project_test_analysis',
+            promptTypes: [
+                { value: 'prompt1', display: 'Анализ багов' },
+                { value: 'prompt2', display: 'Анализ нагрузки команды' },
+                { value: 'prompt3', display: 'Анализ общего качества на проекте' }
             ]
         }
     };
@@ -254,89 +257,132 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function handleFileSelect(event, targetTextarea, fileNameDisplay, clearButton, loadingIndicator) {
+    function generateFileId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    function updateUserInputTextarea() {
+        userInputTextarea.value = uploadedUserInputFiles.map(file => file.content).join(' ').trim();
+        generateAndDisplayPrompt();
+    }
+
+    function renderUserInputFileList() {
+        const contextFilesBlock = document.querySelector('.context-files-block');
+        userInputFileListContainer.innerHTML = '';
+        if (uploadedUserInputFiles.length === 0) {
+            if (contextFilesBlock) contextFilesBlock.style.display = 'none';
+            return;
+        }
+        if (contextFilesBlock) contextFilesBlock.style.display = '';
+        const ul = document.createElement('ul');
+        uploadedUserInputFiles.forEach(file => {
+            const li = document.createElement('li');
+            const fileNameSpan = document.createElement('span');
+            fileNameSpan.textContent = file.name;
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = 'Удалить';
+            removeBtn.dataset.fileId = file.id;
+            removeBtn.className = 'remove-user-input-file-btn';
+            li.appendChild(fileNameSpan);
+            li.appendChild(removeBtn);
+            ul.appendChild(li);
+        });
+        userInputFileListContainer.appendChild(ul);
+    }
+
+    async function processAndAddUserInputFile(event) {
         const fileInput = event.target;
         const file = fileInput.files[0];
 
-        // Reset UI elements for this input
-        targetTextarea.value = '';
-        fileNameDisplay.textContent = '';
-        loadingIndicator.textContent = '';
-        loadingIndicator.style.display = 'none';
-        loadingIndicator.style.color = '#007bff'; // Reset color
+        userInputFileName.textContent = ''; // Clear single file name display
+        userInputFileLoading.textContent = '';
+        userInputFileLoading.style.display = 'none';
 
-        if (!file) {
-            generateAndDisplayPrompt();
-            return;
-        }
+        if (!file) return;
 
-        console.log('Selected file:', { name: file.name, type: file.type, size: file.size }); // Task 1.3
+        console.log('Processing for userInput (multi-file):', { name: file.name, type: file.type, size: file.size });
 
-        loadingIndicator.textContent = 'Processing...';
-        loadingIndicator.style.display = 'inline';
+        userInputFileLoading.textContent = 'Processing...';
+        userInputFileLoading.style.display = 'inline';
+        userInputFileLoading.style.color = '#007bff';
 
         const fileName = file.name;
         const fileExtension = fileName.split('.').pop().toLowerCase();
-        const supportedExtensions = ['csv', 'pdf', 'docx', 'doc'];
+        const supportedExtensions = ['csv', 'pdf', 'docx', 'doc', 'txt'];
 
         if (!supportedExtensions.includes(fileExtension)) {
-            loadingIndicator.textContent = `Error: Unsupported file type (.${fileExtension}). Supported: ${supportedExtensions.join(', ')}`;
-            loadingIndicator.style.color = 'red';
-            fileInput.value = null; // Clear the file input
-            generateAndDisplayPrompt();
+            userInputFileLoading.textContent = `Error: Unsupported file type (.${fileExtension}).`;
+            userInputFileLoading.style.color = 'red';
+            fileInput.value = null;
             return;
         }
 
         try {
             let content = '';
-            if (fileExtension === 'csv') {
-                const textContent = await readFileAsText(file);
-                content = parseCsvContent(textContent);
+            if (fileExtension === 'txt') {
+                content = await readFileAsText(file);
+            } else if (fileExtension === 'csv') {
+                content = parseCsvContent(await readFileAsText(file));
             } else if (fileExtension === 'pdf') {
-                const arrayBuffer = await readFileAsArrayBuffer(file);
-                content = await parsePdfContent(arrayBuffer);
+                content = await parsePdfContent(await readFileAsArrayBuffer(file));
             } else if (fileExtension === 'docx' || fileExtension === 'doc') {
-                const arrayBuffer = await readFileAsArrayBuffer(file);
-                content = await parseDocxContent(arrayBuffer, fileExtension);
+                content = await parseDocxContent(await readFileAsArrayBuffer(file), fileExtension);
             }
 
-            targetTextarea.value = content;
-            fileNameDisplay.textContent = `Loaded: ${fileName}`;
-            fileNameDisplay.style.display = 'block';
-            loadingIndicator.textContent = '';
-            loadingIndicator.style.display = 'none';
-            generateAndDisplayPrompt();
-
+            uploadedUserInputFiles.push({ id: generateFileId(), name: fileName, content: content.trim() });
+            updateUserInputTextarea();
+            renderUserInputFileList();
+            userInputFileLoading.textContent = `Added: ${fileName}`;
+            setTimeout(() => { if(userInputFileLoading.textContent === `Added: ${fileName}`) { userInputFileLoading.textContent = ''; userInputFileLoading.style.display = 'none';}}, 3000);
         } catch (error) {
-            console.error('Error processing file:', error);
-            targetTextarea.value = '';
-            fileNameDisplay.textContent = '';
-            loadingIndicator.textContent = `Error: ${error.message || 'Could not process file.'}`;
-            loadingIndicator.style.color = 'red';
-            fileInput.value = null; // Clear the file input
-            generateAndDisplayPrompt();
+            console.error('Error processing file for userInput:', error);
+            userInputFileLoading.textContent = `Error: ${error.message || 'Could not process file.'}`;
+            userInputFileLoading.style.color = 'red';
+        } finally {
+            fileInput.value = null; // Allow selecting the same file again
         }
     }
 
     function setupClearButtonListener(clearButton, fileInput, targetTextarea, fileNameDisplay, loadingIndicator) {
         clearButton.addEventListener('click', () => {
-            fileInput.value = null;
+            fileInput.value = null; 
             targetTextarea.value = '';
             fileNameDisplay.textContent = '';
             fileNameDisplay.style.display = 'none';
             loadingIndicator.textContent = '';
             loadingIndicator.style.display = 'none';
+            loadingIndicator.style.color = '#007bff'; // Reset color
             generateAndDisplayPrompt();
         });
     }
 
     // Add event listeners for file inputs
-    userInputFile.addEventListener('change', (event) => handleFileSelect(event, userInputTextarea, userInputFileName, clearUserInputFileBtn, userInputFileLoading));
-    customRulesFile.addEventListener('change', (event) => handleFileSelect(event, customRulesTextarea, customRulesFileName, clearCustomRulesFileBtn, customRulesFileLoading));
+    userInputFile.addEventListener('change', processAndAddUserInputFile);
+    customRulesFile.addEventListener('change', (event) => handleSingleFileUpload(event, customRulesTextarea, customRulesFileName, clearCustomRulesFileBtn, customRulesFileLoading));
 
-    // Add event listeners for clear buttons
-    setupClearButtonListener(clearUserInputFileBtn, userInputFile, userInputTextarea, userInputFileName, userInputFileLoading);
+    // Specific clear listener for userInputFile (multi-file)
+    clearUserInputFileBtn.addEventListener('click', () => {
+        uploadedUserInputFiles = [];
+        userInputFile.value = null;
+        userInputFileName.textContent = ''; // Clear any residual single file name
+        userInputFileLoading.textContent = '';
+        userInputFileLoading.style.display = 'none';
+        updateUserInputTextarea(); // Clears textarea and updates prompt
+        renderUserInputFileList(); // Clears the displayed list
+    });
+
+    // Setup clear button for customRulesFile (single-file)
     setupClearButtonListener(clearCustomRulesFileBtn, customRulesFile, customRulesTextarea, customRulesFileName, customRulesFileLoading);
+
+    // Event listener for removing files from the user input list
+    userInputFileListContainer.addEventListener('click', (event) => {
+        if (event.target.classList.contains('remove-user-input-file-btn')) {
+            const fileIdToRemove = event.target.dataset.fileId;
+            uploadedUserInputFiles = uploadedUserInputFiles.filter(file => file.id !== fileIdToRemove);
+            updateUserInputTextarea();
+            renderUserInputFileList();
+        }
+    });
 
     // После определения функции generateAndDisplayPrompt и после загрузки DOM
     document.addEventListener('DOMContentLoaded', function() {
@@ -367,4 +413,6 @@ document.addEventListener('DOMContentLoaded', () => {
             customRulesTextarea.value = `Ошибка загрузки базовых правил: ${error.message}`;
         }
     });
+
+    renderUserInputFileList(); // Скрыть блок при загрузке, если файлов нет
 });
