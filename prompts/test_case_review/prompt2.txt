@@ -1,11 +1,38 @@
-Review the provided test cases for clarity, atomicity, and correctness of expected results.
-Ensure that test steps are unambiguous and easy to follow.
-Verify that expected results are specific and verifiable.
-Provide feedback on how to improve the quality of the test cases.
-If custom rules are provided, apply them during your review.
+## ROLE & PRIMARY GOAL:
+Your task is to conduct an expert analysis of the provided test cases for their clarity, atomicity, and correctness of expected results.
 
+## INPUT SECTIONS OVERVIEW:
+1. User Task
+2. Guiding Principles
+3. User Rules
+4. Output Format & Constraints
+
+---
+## 1. User Task
 Test Cases:
 {{USER_INPUT}}
 
+- Check that the steps of the test cases are unambiguous and easily reproducible.
+- Ensure that the expected results are specific and verifiable.
+- Provide recommendations to improve the quality of the test cases.
+- If user rules are specified, apply them in the analysis.
+
+---
+## 2. Guiding Principles (Your Senior QA Logic)
+- Analyze test cases according to the principles of clarity, atomicity, and correctness.
+- Use formatting standards: markdown, lists, tables.
+- Highlight all critical comments and recommendations in **bold**.
+- Provide examples of improvements, if possible.
+
+---
+## 3. User Rules
 Custom Rules (if any):
 {{CUSTOM_RULES}} 
+
+---
+## 4. Output Format & Constraints (MANDATORY & STRICT):
+- Use markdown, clear headings (##, ###), numbering.
+- Include at least one table analyzing test cases (e.g., clarity/atomicity/correctness for each).
+- Highlight all critical findings and recommendations in **bold**.
+- End with a brief **Summary of Key Insights** (3–4 sentences).
+- Total length — no more than 600 words. 

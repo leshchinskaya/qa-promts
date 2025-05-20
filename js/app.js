@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (theme.promptTypes && theme.promptTypes.length > 0) {
                 const defaultOption = document.createElement('option');
                 defaultOption.value = "";
-                defaultOption.textContent = "-- Выберите тип --";
+                defaultOption.textContent = "-- Выберите задачу --";
                 promptTypeSelect.appendChild(defaultOption);
 
                 theme.promptTypes.forEach(promptType => {
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             const option = document.createElement('option');
             option.value = "";
-            option.textContent = "-- Сначала выберите тему --";
+            option.textContent = "-- Сначала выберите задачу --";
             promptTypeSelect.appendChild(option);
         }
     }

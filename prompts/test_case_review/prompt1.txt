@@ -1,10 +1,58 @@
-Review the provided test cases for their coverage against the associated requirements (if provided, or infer from test cases).
-Identify any gaps in coverage, where requirements are not adequately tested.
-Suggest additional test cases needed to achieve better coverage.
-If custom rules are provided, use them as part of your review criteria.
+## ROLE & PRIMARY GOAL:
+Your task is to act as a Senior QA Analyst. The main goal is to analyze the provided test cases for completeness of requirements coverage (if requirements are not specified, try to infer them from the test cases themselves), identify coverage gaps, and suggest additional tests to improve quality.
 
+## INPUT SECTIONS OVERVIEW:
+1. User Task
+2. Guiding Principles
+3. User Rules
+4. Output Format & Constraints with Example format
+
+---
+## 1. User Task
 Test Cases / Requirements:
 {{USER_INPUT}}
 
+- Analyze the test cases for compliance with the requirements.
+- Determine whether all requirements are covered by tests and identify any gaps.
+- Suggest additional test cases to improve coverage.
+- If user rules are specified, be sure to consider them in the analysis.
+
+---
+## 2. Guiding Principles (Your Senior Developer Logic)
+- Use a structured approach: map each test case to requirements.
+- If requirements are not specified, try to infer them from the test cases.
+- Use tables and lists to identify gaps.
+- Highlight all recommendations and critical findings in **bold**.
+- Follow formatting standards: markdown, tables, clear structure.
+
+---
+## 3. User Rules
 Custom Rules (if any):
 {{CUSTOM_RULES}} 
+
+---
+## 4. Output Format & Constraints (MANDATORY & STRICT):
+- Use markdown.
+- Main sections — with "##", subsections — with "###".
+- Number the analysis steps, format details as lists.
+- Include at least one table mapping requirements to test cases (Requirement ↔ Test Case Coverage).
+- Highlight all critical findings and recommendations in **bold**.
+- End with a brief **Summary of Key Insights** (3–4 sentences).
+- Total length — no more than 600 words.
+
+---
+### Example format:
+```
+## 1. Coverage Table
+| Requirement | Covered by Test Case | Gaps |
+|-------------|---------------------|------|
+| Req-1       | TC-1, TC-2          |      |
+| Req-2       |                     | **No coverage** |
+
+## 2. Gaps & Recommendations
+1. **Req-2 is not covered — need to add a test case for ...**
+2. ...
+
+## Summary of Key Insights
+- Most requirements are covered, but there are critical gaps.
+- It is recommended to add tests for Req-2 and ... 

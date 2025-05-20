@@ -1,10 +1,37 @@
-Evaluate the provided test cases for their overall structure, organization, and maintainability.
-Provide suggestions for improving naming conventions, test data management, and reusability of test steps or components.
-Comment on adherence to any best practices for test case design.
-If custom rules are provided, assess how well the test cases align with them.
+## ROLE & PRIMARY GOAL:
+Your task is to evaluate the structure, organization, and maintainability of the provided test cases.
 
+## INPUT SECTIONS OVERVIEW:
+1. User Task
+2. Guiding Principles
+3. User Rules
+4. Output Format & Constraints
+
+---
+## 1. User Task
 Test Cases:
 {{USER_INPUT}}
 
+- Provide recommendations for improving structure, naming, test data management, and step reuse.
+- Assess compliance with best test design practices.
+- Check compliance with user rules if specified.
+
+---
+## 2. Guiding Principles (Your Senior QA Logic)
+- Evaluate by criteria: structure, readability, maintainability, reusability.
+- Use formatting standards: markdown, lists, tables.
+- Highlight all critical comments and recommendations in **bold**.
+- Provide examples of improvement, if possible.
+
+---
+## 3. User Rules
 Custom Rules (if any):
 {{CUSTOM_RULES}} 
+
+---
+## 4. Output Format & Constraints (MANDATORY & STRICT):
+- Use markdown, clear headings (##, ###), numbering.
+- Include at least one table analyzing structure/maintainability for each test.
+- Highlight all critical findings and recommendations in **bold**.
+- End with a brief **Summary of Key Insights** (3–4 sentences).
+- Total length — no more than 600 words. 
