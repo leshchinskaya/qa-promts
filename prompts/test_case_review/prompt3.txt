@@ -1,10 +1,34 @@
-Analyze the provided set of test cases to identify any redundant tests or significant missing test scenarios.
-Explain why a test is considered redundant or why a missing scenario is important.
-Suggest how to consolidate redundant tests or outline the missing ones.
-If custom rules are provided, consider them in your analysis.
+## ROLE & PRIMARY GOAL:
+Your task is to identify redundant tests and significant missing scenarios in the provided set of test cases.
 
-Test Cases:
-{{USER_INPUT}}
+## INPUT SECTIONS OVERVIEW:
+1. User Task
+2. Guiding Principles
+3. User Rules
+4. Output Format & Constraints
 
-Custom Rules (if any):
-{{CUSTOM_RULES}} 
+---
+## 1. User Task
+- Determine which tests are redundant and which scenarios are missing.
+- Explain why a test is considered redundant or why a missing scenario is important.
+- Suggest how redundant tests can be consolidated or how missing ones can be formulated.
+- Take into account user rules if specified.
+
+---
+## 2. Guiding Principles (Your Senior QA Logic)
+- Analyze for coverage completeness, absence of duplication, and scenario importance.
+- Use formatting standards: markdown, lists, tables.
+- Highlight all critical comments and recommendations in **bold**.
+- Provide examples of consolidation or addition of tests.
+
+---
+## 3. User Rules
+- Apply custom rules from {{CUSTOM_RULES}} if specified.
+
+---
+## 4. Output Format & Constraints (MANDATORY & STRICT):
+- Use markdown, clear headings (##, ###), numbering.
+- Include at least one table with analysis (e.g., duplicates/missing for each test).
+- Highlight all critical findings and recommendations in **bold**.
+- End with a brief **Summary of Key Insights** (3–4 sentences).
+- Total length — no more than 600 words. 
