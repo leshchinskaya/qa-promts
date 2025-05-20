@@ -153,25 +153,28 @@ button:hover {
 }
 
 .clear-file-btn {
-    padding: 2px 8px;
+    width: auto;
+    padding: 4px 10px;
     font-size: 0.85em;
     background-color: #6c757d;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-right: 8px;
-    margin-bottom: 5px;
-    width: auto;
-    min-width: unset;
     display: inline-block;
+    vertical-align: middle;
+    min-width: 0;
     box-sizing: border-box;
+    margin-right: 8px;
+    margin-top: 0;
+    margin-bottom: 3px;
+    line-height: 1.2;
 }
 
 .clear-file-btn:hover {
     background-color: #5a6268;
-    transform: none; /* Override general button hover if needed */
-    box-shadow: none; /* Override general button hover if needed */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .loading-indicator, .file-name-display {

@@ -141,10 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const userInput = userInputTextarea.value.trim();
         const customRules = customRulesTextarea.value.trim();
         const template = await fetchPromptTemplate(themeKey, typeKey);
-        if (!template) {
-            generatedPromptTextarea.value = 'Пожалуйста, выберите тип задачи и детали задачи.';
-            return;
-        }
+        // if (!template) {
+        //     generatedPromptTextarea.value = 'Пожалуйста, выберите тип задачи и детали задачи.';
+        //     return;
+        // }
         let finalPrompt = template.replace('{{USER_INPUT}}', userInput);
         if (customRules) {
             finalPrompt = finalPrompt.replace('Custom Rules (if any):\n{{CUSTOM_RULES}}', `Custom Rules:\n${customRules}`);
