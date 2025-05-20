@@ -22,6 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Определяем темы и количество типов промптов для каждой
     const promptThemes = {
+        project_test_analysis: {
+            name: 'Анализ тестирования на проекте',
+            path: 'project_test_analysis',
+            promptTypes: [
+                { value: 'prompt1', display: 'Анализ багов' },
+                { value: 'prompt2', display: 'Анализ нагрузки команды' },
+                { value: 'prompt3', display: 'Анализ общего качества на проекте' }
+            ]
+        },
         requirements_analysis: {
             name: 'Анализ требований',
             path: 'requirements_analysis',
