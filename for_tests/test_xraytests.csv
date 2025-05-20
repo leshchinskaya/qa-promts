@@ -1,0 +1,2 @@
+TestCaseIdentifier;Summary;Description;Priority;Labels;Action;Data;ExpectedResult;Board
+CAT-001;Check filter retention between sections;Verify that filters are retained when switching between Products and Collections sections;Normal;Smoke;Switch from Products to Collections;Filter set: Color: Red, Size: M;Display previously applied filters in the Collections section;QA

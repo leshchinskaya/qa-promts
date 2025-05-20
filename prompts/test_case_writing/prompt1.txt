@@ -9,6 +9,7 @@ You are a Senior QA Engineer. Your task is to create a set of positive test case
 
 ---
 ## 1. User Task
+{{USER_INPUT}}
 - Analyze the provided requirements.
 - Generate positive test cases that cover the main usage scenarios.
 - If user rules are specified, be sure to consider them when generating test cases.
@@ -18,7 +19,7 @@ You are a Senior QA Engineer. Your task is to create a set of positive test case
 - Use equivalence partitioning, positive testing, and common sense techniques.
 - Each test case must be unique, reproducible, and practically meaningful.
 - Do not duplicate test cases.
-- Prioritize test cases by importance (Priority: High/Medium/Low).
+- Prioritize test cases by importance (Priority: Blocker/Critical/Normal/Minor).
 - For each test case, specify labels (Labels), e.g.: Smoke, Regression, UI, API, etc.
 - Action — a brief description of the main action.
 - Data — specific input data for the test.
