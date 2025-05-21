@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInputFileListContainer = document.getElementById('userInputFileListContainer');
     let uploadedUserInputFiles = [];
 
+    const generatedPromptCharCount = document.getElementById('generatedPromptCharCount');
+
     // Определяем темы и количество типов промптов для каждой
     const promptThemes = {
         requirements_analysis: {
@@ -42,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 { value: 'prompt1', display: 'Для простых позитивных сценариев' },
                 { value: 'prompt2', display: 'Для негативных сценариев и граничных значений' },
                 { value: 'prompt3', display: 'Для комплексных E2E сценариев' },
-                { value: 'prompt4', display: 'Для исследовательского тестирования (чек-лист)' }
+                { value: 'prompt4', display: 'Для исследовательского тестирования (чек-лист)' },
+                { value: 'prompt5', display: 'Для генерации пользовательских сценариев и проверок по тестам' }
             ]
         },
         test_case_review: {
@@ -146,6 +149,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Функция для обновления счетчика символов
+    function updateGeneratedPromptCharCount() {
+        if (generatedPromptCharCount && generatedPromptTextarea) {
+            const len = generatedPromptTextarea.value.length;
+            generatedPromptCharCount.textContent = len + ' символ' + (len % 10 === 1 && len % 100 !== 11 ? ' ' : (len % 10 >= 2 && len % 10 <= 4 && (len % 100 < 10 || len % 100 >= 20) ? 'а ' : 'ов '));
+        }
+    }
+
     // Function to generate and display the prompt
     async function generateAndDisplayPrompt() {
         const themeKey = promptThemeSelect.value;
@@ -166,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             finalPrompt = finalPrompt.replace('{{CUSTOM_RULES}}', 'None');
         }
         generatedPromptTextarea.value = finalPrompt;
+        updateGeneratedPromptCharCount();
     }
 
     // Обработчик изменения темы
@@ -195,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Инициализация типов промптов и первоначальная генерация промпта при загрузке
     populatePromptTypes();
     generateAndDisplayPrompt(); // Initial call to display prompt or placeholder
+    updateGeneratedPromptCharCount();
 
     // Setup PDF.js worker
     if (window.pdfjsLib) {
