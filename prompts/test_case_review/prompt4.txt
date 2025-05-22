@@ -11,7 +11,6 @@ Your task is to evaluate the structure, organization, and maintainability of the
 ## 1. User Task
 Test Cases:
 {{USER_INPUT}}
-
 - Provide recommendations for improving structure, naming, test data management, and step reuse.
 - Assess compliance with best test design practices.
 - Check compliance with user rules if specified.

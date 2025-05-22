@@ -76,6 +76,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 { value: 'prompt2', display: 'Анализ нагрузки команды' },
                 { value: 'prompt3', display: 'Анализ общего качества на проекте' }
             ]
+        },
+        ai_boost_promts: {
+            name: 'Создание требований',
+            path: 'ai-boost-promts',
+            promptTypes: [
+                { value: 'prompt1', display: 'Написание документации' },
+                { value: 'prompt2', display: 'Создание xstate машины' }
+            ]
         }
     };
 
@@ -428,4 +436,144 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     renderUserInputFileList(); // Скрыть блок при загрузке, если файлов нет
+
+    // --- Xray Importer Logic ---
+    const jiraUrlInput = document.getElementById('jiraUrl');
+    const jiraUsernameInput = document.getElementById('jiraUsername');
+    const jiraPasswordInput = document.getElementById('jiraPassword');
+    const jiraProjectKeyInput = document.getElementById('jiraProjectKey');
+    const xrayCsvDataTextarea = document.getElementById('xrayCsvData');
+    const runXrayImportBtn = document.getElementById('runXrayImportBtn');
+    const xrayImportLoadingSpan = document.getElementById('xrayImportLoading');
+    const xrayImportResultOutputPre = document.getElementById('xrayImportResultOutput');
+    const xrayCsvFileInput = document.getElementById('xrayCsvFile');
+    const loadCsvFileBtn = document.getElementById('loadCsvFileBtn');
+    const clearCsvFileBtn = document.getElementById('clearCsvFileBtn');
+
+    // Установить значение по умолчанию для jiraUrl, если оно пустое
+    if (jiraUrlInput && !jiraUrlInput.value) {
+        jiraUrlInput.value = 'https://jira.surf.dev';
+    }
+
+    function makeJiraLinksClickable(outputText, jiraUrl) {
+        // Найти все уникальные ключи задач (например, SURFQA-2377)
+        const issueKeyRegex = /([A-Z][A-Z0-9]+-\d+)/g;
+        const foundKeys = Array.from(new Set((outputText.match(issueKeyRegex) || [])));
+        if (foundKeys.length === 0) return outputText;
+        // Сформировать ссылку
+        const jql = encodeURIComponent('issuekey in (' + foundKeys.join(', ') + ')');
+        // Использовать первый ключ для browse
+        const mainKey = foundKeys[0];
+        const link = `${jiraUrl}/browse/${mainKey}?jql=${jql}`;
+        // Заменить все ключи на ссылку
+        let replaced = outputText;
+        foundKeys.forEach(key => {
+            // Заменяем только "голые" ключи (не внутри других слов)
+            replaced = replaced.replace(new RegExp(`(?<![\\w-])(${key})(?![\\w-])`, 'g'), `<a href="${link}" target="_blank" rel="noopener noreferrer">${key}</a>`);
+        });
+        // Добавить ссылку в начало блока STDOUT, если есть ключи
+        replaced = replaced.replace(/(--- STDOUT \(Вывод скрипта\) ---\n)/, `$1${link}\n`);
+        return replaced;
+    }
+
+    if (runXrayImportBtn) {
+        runXrayImportBtn.addEventListener('click', async () => {
+            const jiraUrl = jiraUrlInput.value.trim();
+            const jiraUsername = jiraUsernameInput.value.trim();
+            const jiraPassword = jiraPasswordInput.value; // Password might intentionally have spaces
+            const jiraProjectKey = jiraProjectKeyInput.value.trim();
+            const csvData = xrayCsvDataTextarea.value.trim();
+
+            if (!jiraUrl || !jiraUsername || !jiraPassword || !jiraProjectKey || !csvData) {
+                xrayImportResultOutputPre.textContent = 'Ошибка: Все поля (Jira URL, Логин, Пароль, Ключ проекта) и CSV данные должны быть заполнены.';
+                return;
+            }
+
+            xrayImportLoadingSpan.style.display = 'inline';
+            runXrayImportBtn.disabled = true;
+            xrayImportResultOutputPre.textContent = 'Выполняется запрос к серверу...';
+
+            try {
+                const response = await fetch('http://localhost:5050/api/run-xray-script', { // Assumes API is on the same origin
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        jira_url: jiraUrl,
+                        jira_username: jiraUsername,
+                        jira_password: jiraPassword,
+                        jira_project_key: jiraProjectKey,
+                        csv_data: csvData,
+                    }),
+                });
+
+                const result = await response.json();
+
+                let outputText = `--- Результаты импорта: ---\n${result.stdout || '(пусто)'}\n\n`;
+                outputText += `--- Ошибки выполнения: ---\n${result.stderr || '(пусто)'}\n`;
+                
+                if (result.error) { // Errors from the backend server itself
+                     outputText += `\n--- Ошибка сервера Flask ---\n${result.error}\n`;
+                }
+
+                // Сделать номера задач кликабельными
+                const clickableOutput = makeJiraLinksClickable(outputText, jiraUrl);
+                xrayImportResultOutputPre.innerHTML = clickableOutput;
+
+            } catch (error) {
+                console.error('Error calling Xray import API:', error);
+                xrayImportResultOutputPre.textContent = `Критическая ошибка при вызове API: ${error.message}\nУбедитесь, что бэкенд-сервер (Flask) запущен и доступен по адресу /api/run-xray-script.`;
+            } finally {
+                xrayImportLoadingSpan.style.display = 'none';
+                runXrayImportBtn.disabled = false;
+            }
+        });
+    }
+
+    // Загрузка CSV-файла в textarea
+    if (loadCsvFileBtn && xrayCsvFileInput && xrayCsvDataTextarea) {
+        loadCsvFileBtn.addEventListener('click', () => {
+            xrayCsvFileInput.value = '';
+            xrayCsvFileInput.click();
+        });
+        xrayCsvFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                xrayCsvDataTextarea.value = e.target.result;
+            };
+            reader.readAsText(file);
+        });
+    }
+
+    if (clearCsvFileBtn && xrayCsvDataTextarea) {
+        clearCsvFileBtn.addEventListener('click', () => {
+            xrayCsvDataTextarea.value = '';
+        });
+    }
+
+    // Sidebar menu logic
+    function setupSidebarMenu() {
+        const menuItems = document.querySelectorAll('.sidebar-menu-item');
+        const promptSection = document.getElementById('prompt-generator-section');
+        const xraySection = document.getElementById('xray-import-section');
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                if (this.dataset.section === 'prompt-generator') {
+                    promptSection.style.display = '';
+                    xraySection.style.display = 'none';
+                    promptSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (this.dataset.section === 'xray-import') {
+                    promptSection.style.display = 'none';
+                    xraySection.style.display = '';
+                    xraySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+    setupSidebarMenu();
 });

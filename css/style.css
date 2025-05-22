@@ -12,7 +12,7 @@ body {
 
 .container {
     background-color: #fff;
-    padding: 30px;
+    padding: 40px 40px 30px 40px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 100%;
@@ -52,20 +52,24 @@ label {
     color: #555;
 }
 
+input[type="text"],
+input[type="password"],
 select,
 textarea {
-    width: 100%;
+    width: calc(100% - 24px); /* Account for padding */
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    box-sizing: border-box;
-    font-size: 1rem;
-    background-color: #fff;
+    background: #fff;
+    font-size: 1em;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
+input[type="text"]:focus,
+input[type="password"]:focus,
 select:focus,
 textarea:focus {
+    width: calc(100% - 24px); /* Recalculate width on focus if needed, ensure consistency */
     border-color: #007bff;
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
     outline: 0;
@@ -316,4 +320,314 @@ button:hover {
 
 .output-panel .context-files-block {
     margin-top: auto;
+}
+
+.jira-row-fields {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+.jira-row-fields .form-group {
+    flex: 1 1 0;
+    margin-bottom: 0;
+}
+@media (max-width: 900px) {
+    .jira-row-fields {
+        flex-direction: column;
+        gap: 0;
+    }
+    .jira-row-fields .form-group {
+        margin-bottom: 16px;
+    }
+}
+
+.xray-cols {
+    display: flex;
+    gap: 32px;
+    margin-top: 10px;
+    width: 100%;
+}
+.xray-col, .xray-col-left, .xray-col-right {
+    box-sizing: border-box;
+}
+.xray-col {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.xray-col-left {
+    flex: 1 1 0;
+}
+.xray-col-right {
+    min-width: 520px;
+    flex: 0 0 500px;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.xray-col-right .form-group {
+    width: 100%;
+}
+.csv-upload-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+.csv-upload-row textarea {
+    flex: 1 1 0;
+    min-width: 0;
+    margin-bottom: 0;
+}
+.csv-upload-row .file-upload-btn,
+.csv-upload-row .clear-file-btn {
+    height: auto;
+    padding: 4px 10px;
+    font-size: 0.85em;
+    margin-top: 0;
+    margin-bottom: 0;
+    white-space: nowrap;
+    border-radius: 4px;
+    min-width: 0;
+    box-sizing: border-box;
+}
+@media (max-width: 900px) {
+    .xray-cols {
+        flex-direction: column;
+        gap: 0;
+    }
+    .xray-col-left, .xray-col-right {
+        max-width: 100%;
+        min-width: 0;
+    }
+    .csv-upload-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+    .csv-upload-row .file-upload-btn {
+        width: 100%;
+        height: auto;
+    }
+}
+
+.xray-importer-panel {
+    background-color: #fdfdfd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+    padding: 25px 25px 30px 25px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.xray-importer-panel h2 {
+    font-size: 1.4em;
+    color: #333;
+    margin-bottom: 24px;
+    font-weight: 600;
+    text-align: left;
+}
+.xray-importer-panel label {
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 1em;
+}
+.xray-importer-panel input[type="text"],
+.xray-importer-panel input[type="password"],
+.xray-importer-panel textarea {
+    width: calc(100% - 24px);
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 1em;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    margin-bottom: 0;
+}
+.xray-importer-panel input[type="text"]:focus,
+.xray-importer-panel input[type="password"]:focus,
+.xray-importer-panel textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.15);
+    outline: 0;
+}
+.xray-importer-panel .form-group {
+    margin-bottom: 20px;
+}
+.xray-importer-panel .jira-row-fields {
+    margin-bottom: 20px;
+}
+.xray-importer-panel .xray-cols {
+    display: flex;
+    gap: 32px;
+    margin-top: 10px;
+}
+.xray-importer-panel .xray-col {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.xray-importer-panel .xray-col-left {
+    max-width: 480px;
+}
+.xray-importer-panel .xray-col-right {
+    min-width: 500px;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.xray-importer-panel .csv-upload-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.xray-importer-panel .csv-upload-row .file-upload-btn {
+    margin-top: 0;
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+.xray-importer-panel .csv-upload-row textarea {
+    flex: 1 1 0;
+    min-width: 0;
+    margin-bottom: 0;
+}
+.xray-importer-panel textarea#xrayImportResultOutput {
+    min-height: 180px;
+    background-color: #f8f9fa;
+    font-family: monospace, "Courier New", Courier;
+    color: #212529;
+    resize: vertical;
+}
+@media (max-width: 900px) {
+    .xray-importer-panel .xray-cols {
+        flex-direction: column;
+        gap: 0;
+    }
+    .xray-importer-panel .xray-col-left, .xray-importer-panel .xray-col-right {
+        max-width: 100%;
+        min-width: 0;
+    }
+    .xray-importer-panel .csv-upload-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+    .xray-importer-panel .csv-upload-row .file-upload-btn {
+        width: 100%;
+        height: auto;
+    }
+}
+
+.xray-section-block {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.07);
+    border: 1px solid #eee;
+    padding: 22px 20px 18px 20px;
+    margin-bottom: 22px;
+}
+
+.monospace-output {
+    font-family: monospace, "Courier New", Courier;
+    background-color: #f8f9fa;
+    color: #212529;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 180px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 100%;
+}
+.monospace-output a {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    word-break: break-all;
+}
+
+.xray-col-right .monospace-output {
+    width: 100% !important;
+    box-sizing: border-box;
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Sidebar menu styles */
+.sidebar-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 200px;
+    background: #f5f7fa;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    padding-top: 40px;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.03);
+}
+.sidebar-menu-item {
+    padding: 12px 14px;
+    font-size: 1.08em;
+    color: #333;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    user-select: none;
+}
+.sidebar-menu-item:hover {
+    background: #e9f2fb;
+    color: #007bff;
+}
+.sidebar-menu-item.active {
+    background: #e3eefd;
+    color: #007bff;
+    border-left: 4px solid #007bff;
+    font-weight: 600;
+}
+
+.main-content {
+    margin-left: 200px;
+    padding-left: 32px;
+    padding-top: 32px;
+    padding-right: 0;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+    .sidebar-menu {
+        position: static;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        box-shadow: none;
+        padding-top: 0;
+    }
+    .sidebar-menu-item {
+        flex: 1 1 0;
+        padding: 14px 0;
+        text-align: center;
+        border-left: none;
+        border-bottom: 4px solid transparent;
+    }
+    .sidebar-menu-item.active {
+        border-left: none;
+        border-bottom: 4px solid #007bff;
+    }
+    .main-content {
+        margin-left: 0;
+        padding-left: 0;
+        padding-top: 0;
+        padding-right: 0;
+    }
+    .container {
+        padding: 20px;
+    }
 } 

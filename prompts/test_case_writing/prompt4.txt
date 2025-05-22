@@ -11,7 +11,6 @@ You are a Senior QA Engineer. Your task is to develop a set of exploratory testi
 ## 1. User Task
 Requirements:
 {{USER_INPUT}}
-
 - Analyze the requirements and identify key areas for exploratory testing.
 - For each area, formulate a separate charter with a mission, scope, and key questions.
 - If custom rules are provided, make sure to follow them when generating charters.

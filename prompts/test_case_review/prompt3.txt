@@ -11,7 +11,6 @@ Your task is to identify redundant tests and significant missing scenarios in th
 ## 1. User Task
 Test Cases:
 {{USER_INPUT}}
-
 - Determine which tests are redundant and which scenarios are missing.
 - Explain why a test is considered redundant or why a missing scenario is important.
 - Suggest how redundant tests can be consolidated or how missing ones can be formulated.

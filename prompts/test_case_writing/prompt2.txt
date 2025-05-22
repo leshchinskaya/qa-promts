@@ -11,7 +11,6 @@ You are a Senior QA Engineer. Your task is to generate a set of negative test ca
 ## 1. User Task
 Requirements:
 {{USER_INPUT}}
-
 - Analyze the provided requirements.
 - Generate negative test cases that cover errors, invalid data, and non-standard scenarios.
 - If custom rules are provided, make sure to follow them when generating test cases.

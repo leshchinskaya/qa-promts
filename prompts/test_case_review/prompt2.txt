@@ -11,7 +11,6 @@ Your task is to conduct an expert analysis of the provided test cases for their 
 ## 1. User Task
 Test Cases:
 {{USER_INPUT}}
-
 - Check that the steps of the test cases are unambiguous and easily reproducible.
 - Ensure that the expected results are specific and verifiable.
 - Provide recommendations to improve the quality of the test cases.

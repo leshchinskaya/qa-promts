@@ -8,109 +8,183 @@
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <div class="container">
-        <h1>Генератор промтов для тестирования</h1>
-        
-        <div class="main-layout">
-            <div class="input-panel">
-                <div class="form-group">
-                    <label for="promptTheme">Тип задачи:</label>
-                    <select id="promptTheme">
-                        <option value="">-- Выберите тип задачи --</option>
-                        <option value="requirements_analysis">Анализ требований</option>
-                        <option value="test_case_writing">Написание проверок</option>
-                        <option value="test_case_review">Ревью проверок</option>
-                        <option value="project_test_analysis">Анализ тестирования на проекте</option>
-                        <option value="vulnerability_search">Поиск уязвимостей</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="promptType">Детали задачи:</label>
-                    <select id="promptType">
-                        <option value="">-- Сначала выберите тип задачи --</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="userInput">Входные данные:</label>
-                    <div class="file-upload-controls">
-                        <input type="file" id="userInputFile" accept=".pdf,.doc,.docx,.csv,.txt" style="display:none;">
-                        <label for="userInputFile" class="file-upload-btn load-base-rules-btn">Добавить файл</label>
-                        <button type="button" id="clearUserInputFile" class="clear-file-btn">Очистить все</button>
-                        <span id="userInputFileLoading" class="loading-indicator" style="display:none;"></span>
+    <div class="sidebar-menu">
+        <div class="sidebar-menu-item active" data-section="prompt-generator">Сгенерировать промт</div>
+        <div class="sidebar-menu-item" data-section="xray-import">Импортировать проверки</div>
+    </div>
+    <div class="container main-content">
+        <div id="prompt-generator-section">
+            <h2>Генератор промтов для тестирования</h2>
+            <div class="main-layout">
+                <div class="input-panel">
+                    <div class="form-group">
+                        <label for="promptTheme">Тип задачи:</label>
+                        <select id="promptTheme">
+                            <option value="">-- Выберите тип задачи --</option>
+                            <option value="requirements_analysis">Анализ требований</option>
+                            <option value="test_case_writing">Написание проверок</option>
+                            <option value="test_case_review">Ревью проверок</option>
+                            <option value="project_test_analysis">Анализ тестирования на проекте</option>
+                            <option value="vulnerability_search">Поиск уязвимостей</option>
+                            <option value="ai_boost_promts">AI-Boost-Features</option>
+                        </select>
                     </div>
-                    <span id="userInputFileName" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
-                    <textarea id="userInput" placeholder="Добавьте входные данные, например: требования, список багов, проверки и т.д."></textarea>
-                </div>
-                <div class="context-files-block">
-                    <div class="context-files-title">Загруженные файлы</div>
-                    <div id="userInputFileListContainer"></div>
+
+                    <div class="form-group">
+                        <label for="promptType">Детали задачи:</label>
+                        <select id="promptType">
+                            <option value="">-- Сначала выберите тип задачи --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userInput">Входные данные:</label>
+                        <div class="file-upload-controls">
+                            <input type="file" id="userInputFile" accept=".pdf,.doc,.docx,.csv,.txt" style="display:none;">
+                            <label for="userInputFile" class="file-upload-btn load-base-rules-btn">Добавить файл</label>
+                            <button type="button" id="clearUserInputFile" class="clear-file-btn">Очистить все</button>
+                            <span id="userInputFileLoading" class="loading-indicator" style="display:none;"></span>
+                        </div>
+                        <span id="userInputFileName" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
+                        <textarea id="userInput" placeholder="Добавьте входные данные, например: требования, список багов, проверки и т.д."></textarea>
+                    </div>
+                    <div class="context-files-block">
+                        <div class="context-files-title">Загруженные файлы</div>
+                        <div id="userInputFileListContainer"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customRules">Кастомные правила (опционально):</label>
+                        <div class="file-upload-controls" style="gap: 8px; flex-wrap: wrap;">
+                            <input type="file" id="customRulesFile" accept=".pdf,.doc,.docx,.csv,.txt" style="display:none;">
+                            <label for="customRulesFile" class="file-upload-btn load-base-rules-btn">Выберите файл</label>
+                            <button type="button" id="loadBaseRulesBtn" class="file-upload-btn load-base-rules-btn">Загрузить базовые правила</button>
+                            <button type="button" id="clearCustomRulesFile" class="clear-file-btn">Очистить</button>
+                            <span id="customRulesFileLoading" class="loading-indicator" style="display:none;"></span>
+                        </div>
+                        <span id="customRulesFileName" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
+                        <textarea id="customRules" placeholder="Введите кастомные правила или инструкции для того, чтобы получить более точный результат"></textarea>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="customRules">Кастомные правила (опционально):</label>
-                    <div class="file-upload-controls" style="gap: 8px; flex-wrap: wrap;">
-                        <input type="file" id="customRulesFile" accept=".pdf,.doc,.docx,.csv,.txt" style="display:none;">
-                        <label for="customRulesFile" class="file-upload-btn load-base-rules-btn">Выберите файл</label>
-                        <button type="button" id="loadBaseRulesBtn" class="file-upload-btn load-base-rules-btn">Загрузить базовые правила</button>
-                        <button type="button" id="clearCustomRulesFile" class="clear-file-btn">Очистить</button>
-                        <span id="customRulesFileLoading" class="loading-indicator" style="display:none;"></span>
+                <div class="output-panel">
+                    <div class="form-group">
+                        <label for="generatedPrompt" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                            <span>Готовый промт:</span>
+                        </label>
+                        <textarea id="generatedPrompt" readonly placeholder="Здесь появится сгенерированный промпт, выберите тип задачи и детали задачи, добавьте входные данные и кастомные правила"></textarea>
                     </div>
-                    <span id="customRulesFileName" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
-                    <textarea id="customRules" placeholder="Введите кастомные правила или инструкции для того, чтобы получить более точный результат"></textarea>
+                    <button id="copyBtn">Копировать промт</button>
+                    <p id="copyFeedback" style="text-align: center; color: green; display: none;">Скопировано!</p>
+                    <p style="margin-top: 10px; color: #555; font-size: 15px; text-align: left;">Скопируйте промт и переходите в чат, например:</p>
+                    <ul class="service-list">
+                        <li>
+                            Google AI Studio – 
+                            <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer">
+                                https://aistudio.google.com/
+                            </a>
+                          </li>
+                        <li>
+                            Grok – 
+                            <a href="https://grok.com/" target="_blank" rel="noopener noreferrer">
+                              https://grok.com/
+                            </a>
+                          </li>
+                          <li>
+                            ChatGPT – 
+                            <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">
+                              https://chatgpt.com/
+                            </a>
+                          </li>
+                          <li>
+                            Qwen – 
+                            <a href="https://chat.qwen.ai/" target="_blank" rel="noopener noreferrer">
+                              https://chat.qwen.ai/
+                            </a>
+                          </li>
+                          <li>
+                            DeepSeek – 
+                            <a href="https://chat.deepseek.com/" target="_blank" rel="noopener noreferrer">
+                                https://chat.deepseek.com/
+                            </a>
+                          </li>
+                          <li>
+                            Mistral – 
+                            <a href="https://chat.mistral.ai/chat" target="_blank" rel="noopener noreferrer">
+                                https://chat.mistral.ai/chat
+                            </a>
+                          </li>
+                    </ul>
                 </div>
             </div>
-
-            <div class="output-panel">
-                <div class="form-group">
-                    <label for="generatedPrompt" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-                        <span>Готовый промт:</span>
-                        <span id="generatedPromptCharCount" style="font-size: 13px; color: #888; min-width: 60px; text-align: right;">0 символов</span>
-                    </label>
-                    <textarea id="generatedPrompt" readonly placeholder="Здесь появится сгенерированный промпт, выберите тип задачи и детали задачи, добавьте входные данные и кастомные правила"></textarea>
+        </div>
+        <div id="xray-import-section" style="display:none;">
+            <h2>Импорт тестов в Xray (недоступно в pages)</h2>
+            <div class="xray-importer-panel" style="margin-top: 30px;">
+                <div class="xray-section-block">
+                    <div class="jira-row-fields">
+                        <div class="form-group">
+                            <label for="jiraUrl">Jira URL:</label>
+                            <input type="text" id="jiraUrl" placeholder="https://your-jira.example.com" value="https://jira.surf.dev">
+                        </div>
+                        <div class="form-group">
+                            <label for="jiraUsername">login:</label>
+                            <input type="text" id="jiraUsername" placeholder="your_jira_username">
+                        </div>
+                        <div class="form-group">
+                            <label for="jiraPassword">password:</label>
+                            <input type="password" id="jiraPassword" placeholder="your_jira_password">
+                        </div>
+                        <div class="form-group">
+                            <label for="jiraProjectKey">Project key:</label>
+                            <input type="text" id="jiraProjectKey" placeholder="SURFQA">
+                        </div>
+                    </div>
                 </div>
-                <button id="copyBtn">Копировать промт</button>
-                <p id="copyFeedback" style="text-align: center; color: green; display: none;">Скопировано!</p>
-                <p style="margin-top: 10px; color: #555; font-size: 15px; text-align: left;">Скопируйте промт и переходите в чат, например:</p>
-                <ul class="service-list">
-                    <li>
-                        Google AI Studio – 
-                        <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer">
-                            https://aistudio.google.com/
-                        </a>
-                      </li>
-                    <li>
-                        Grok – 
-                        <a href="https://grok.com/" target="_blank" rel="noopener noreferrer">
-                          https://grok.com/
-                        </a>
-                      </li>
-                      <li>
-                        ChatGPT – 
-                        <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">
-                          https://chatgpt.com/
-                        </a>
-                      </li>
-                      <li>
-                        Qwen – 
-                        <a href="https://chat.qwen.ai/" target="_blank" rel="noopener noreferrer">
-                          https://chat.qwen.ai/
-                        </a>
-                      </li>
-                      <li>
-                        DeepSeek – 
-                        <a href="https://chat.deepseek.com/" target="_blank" rel="noopener noreferrer">
-                            https://chat.deepseek.com/
-                        </a>
-                      </li>
-                      <li>
-                        Mistral – 
-                        <a href="https://chat.mistral.ai/chat" target="_blank" rel="noopener noreferrer">
-                            https://chat.mistral.ai/chat
-                        </a>
-                      </li>
-                  </ul>
+                <div class="xray-cols">
+                    <div class="xray-col xray-col-left">
+                        <div class="xray-section-block">
+                            <div class="form-group">
+                                <label for="xrayCsvData">CSV данные для импорта:</label>
+                                <div class="csv-upload-row">
+                                    <input type="file" id="xrayCsvFile" accept=".csv" style="display:none;">
+                                    <button type="button" id="loadCsvFileBtn" class="file-upload-btn load-base-rules-btn">Загрузить csv</button>
+                                    <button type="button" id="clearCsvFileBtn" class="clear-file-btn">Очистить</button>
+                                </div>
+                                <textarea id="xrayCsvData" rows="10" placeholder="Вставьте сюда CSV данные в формате:
+Summary;Description;Priority;Labels;Action;Data;ExpectedResult;Board
+Test case 1 summary;Description for TC1;High;smoke,regression;Step 1 Action;Step 1 Data;Step 1 Expected Result;QA"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xray-col xray-col-right">
+                        <div class="xray-section-block">
+                            <div class="form-group" style="margin-top: 0;">
+                                <label for="xrayImportResultOutput">Результат выполнения:</label>
+                                <div id="xrayImportResultWrapper" style="position: relative; width: 100%; max-width: none;">
+                                  <div id="xrayImportResultOutput"
+                                       class="monospace-output"
+                                       style="background-color: #f8f9fa; border: 1px solid #ccc;
+                                              padding: 10px; min-height: 180px; font-family: monospace,'Courier New',Courier;
+                                              color: #212529; white-space: pre-wrap; word-wrap: break-word;
+                                              width: 100%;"></div>
+                                  <div id="xrayPlaceholder"
+                                       style="position: absolute; top: 10px; left: 10px;
+                                              color: #6c757d; pointer-events: auto;">
+                                    Здесь будет результат выполнения импорта и ссылки на созданные тесты</a>
+                                  </div>
+                                </div>
+                                <span id="xrayImportLoading"
+                                      style="display:none; margin-left: 10px; color: #007bff;">Обработка...</span>
+                                <button id="runXrayImportBtn" class="copyBtn" style="margin-top: 18px;">
+                                  Запустить импорт в Xray
+                                </button>
+                              </div>
+                              
+                            
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -118,5 +192,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.18/mammoth.browser.min.js"></script>
     <script src="js/app.js"></script>
+    <script>
+        const output = document.getElementById('xrayImportResultOutput');
+        const placeholder = document.getElementById('xrayPlaceholder');
+        const observer = new MutationObserver(() => {
+          if (output.textContent.trim()) {
+            placeholder.style.display = 'none';
+          } else {
+            placeholder.style.display = '';
+          }
+        });
+        observer.observe(output, {
+          childList: true,
+          subtree: true,
+          characterData: true
+        });
+      </script>
 </body>
 </html>
