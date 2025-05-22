@@ -1,0 +1,71 @@
+import { createMachine, assign } from "xstate";
+        const errors = [
+          {
+            code: "BANK_DECLINE",
+            message:
+              "\\u041E\\u0442\\u043A\\u0430\\u0437 \\u0431\\u0430\\u043D\\u043A\\u0430. \\u041F\\u043E\\u0436\\u0430\\u043B\\u0443\\u0439\\u0441\\u0442\\u0430, \\u043F\\u0440\\u043E\\u0432\\u0435\\u0440\\u044C\\u0442\\u0435 \\u043A\\u0430\\u0440\\u0442\\u0443 \\u0438\\u043B\\u0438 \\u0438\\u0441\\u043F\\u043E\\u043B\\u044C\\u0437\\u0443\\u0439\\u0442\\u0435 \\u0434\\u0440\\u0443\\u0433\\u0443\\u044E.",
+          },
+          {
+            code: "INSUFFICIENT_FUNDS",
+            message:
+              "\\u041D\\u0435\\u0434\\u043E\\u0441\\u0442\\u0430\\u0442\\u043E\\u0447\\u043D\\u043E \\u0441\\u0440\\u0435\\u0434\\u0441\\u0442\\u0432 \\u043D\\u0430 \\u043A\\u0430\\u0440\\u0442\\u0435.",
+          },
+          {
+            code: "CARD_EXPIRED",
+            message:
+              "\\u0421\\u0440\\u043E\\u043A \\u0434\\u0435\\u0439\\u0441\\u0442\\u0432\\u0438\\u044F \\u043A\\u0430\\u0440\\u0442\\u044B \\u0438\\u0441\\u0442\\u0435\\u043A.",
+          },
+          {
+            code: "INVALID_CARD_DATA",
+            message:
+              "\\u041D\\u0435\\u0432\\u0435\\u0440\\u043D\\u044B\\u0435 \\u0434\\u0430\\u043D\\u043D\\u044B\\u0435 \\u043A\\u0430\\u0440\\u0442\\u044B.",
+          },
+          {
+            code: "GATEWAY_TIMEOUT",
+            message:
+              "\\u0412\\u0440\\u0435\\u043C\\u044F \\u043E\\u0436\\u0438\\u0434\\u0430\\u043D\\u0438\\u044F \\u043E\\u0442\\u0432\\u0435\\u0442\\u0430 \\u043E\\u0442 \\u043F\\u043B\\u0430\\u0442\\u0435\\u0436\\u043D\\u043E\\u0433\\u043E \\u0448\\u043B\\u044E\\u0437\\u0430 \\u0438\\u0441\\u0442\\u0435\\u043A\\u043B\\u043E. \\u041F\\u043E\\u043F\\u0440\\u043E\\u0431\\u0443\\u0439\\u0442\\u0435 \\u043F\\u043E\\u0437\\u0436\\u0435.",
+          },
+        ];
+        throw errors[Math.floor(Math.random() * errors.length)];
+      }
+    },
+    externalOrBankTransferHandlerService: async (context, event) => {
+      await new Promise((resolve) => setTimeout(resolve, 700));
+      console.log(
+        `SERVICE_EXTERNAL: Handling ${event.data.paymentMethod} for ${event.data.amount} RUB, Order ${event.data.orderId}`,
+      );
+      // Simulate Apple Pay, Google Pay, or Bank Transfer initiation
+      if (Math.random() < 0.95) {
+        return {
+          transactionId: `txn_${event.data.paymentMethod}_${Date.now()}`,
+          gatewayResponse: { status: "success" },
+        };
+      } else {
+        throw {
+          code: `EXTERNAL_PAYMENT_FAILED_${event.data.paymentMethod?.toUpperCase()}`,
+          message: `Ошибка при оплате через ${event.data.paymentMethod}. Попробуйте другой способ.`,
+        };
+      }
+    },
+    generateAndSendReceiptService: async (context, event) => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      console.log(
+        `SERVICE_RECEIPT: Generating PDF receipt for TxID: ${event.data.transactionId} and sending to ${event.data.userEmail}`,
+      );
+      // In a real app, this would involve PDF generation and email sending libraries.
+      // It would also use event.data for receipt content (order details, amounts, etc.)
+      const success = Math.random() < 0.98;
+      if (success) {
+        return {
+          pdfContent: `PDF_CONTENT_FOR_ORDER_${event.data.orderId}_TXN_${event.data.transactionId}`,
+          emailSent: true,
+        };
+      } else {
+        throw {
+          error:
+            "\\u041E\\u0448\\u0438\\u0431\\u043A\\u0430 \\u043F\\u0440\\u0438 \\u0433\\u0435\\u043D\\u0435\\u0440\\u0430\\u0446\\u0438\\u0438 \\u0438\\u043B\\u0438 \\u043E\\u0442\\u043F\\u0440\\u0430\\u0432\\u043A\\u0435 \\u043A\\u0432\\u0438\\u0442\\u0430\\u043D\\u0446\\u0438\\u0438.",
+        };
+      }
+    },
+  },
+});

@@ -59,6 +59,34 @@ export const featureMachine = createMachine({
     performFeature: (context, event) => { /* ... */ }
   }
 });
+
+When designing an XState state machine, please adhere to the following best practices to ensure quality, robustness, and maintainability:
+Context Management:
+Define initialContext: Always clearly define an initialContext object with default values for all context properties.
+Context Initialization/Reset: Ensure context properties are properly initialized upon relevant state entries (e.g., when starting a new flow) and reset/cleared appropriately when transitioning to initial states, upon cancellation, or when data is no longer needed. Be mindful of object references versus deep copies for nested context properties.
+Sensitive Data: Handle sensitive data (e.g., payment details) with extreme care. Avoid storing it in the machine's context if possible, or clear it immediately after use. Prefer passing it directly to invoked services that handle it securely.
+Asynchronous Operations (invoke):
+Handle onDone and onError: For every invoke (services, actors), implement both onDone and onError handlers to manage successful outcomes and potential failures gracefully.
+Pass input Data: Use the input property of invoke to explicitly pass necessary data from the machine's context or event to the invoked service/actor. Avoid relying on implicit access to the parent machine's context within the service if the service is meant to be generic.
+Manage Loading States: Explicitly manage loading/busy states (e.g., an isLoading flag in context). Set this flag before initiating an asynchronous operation and ensure it's reset in both onDone and onError handlers.
+State and Transition Design:
+Complete Lifecycles: Model the entire process lifecycle, including all success paths, failure paths (with distinct error states or handling), retry mechanisms, and cancellation states. Use final states where appropriate.
+Clear Naming: Employ clear, descriptive, and consistent naming conventions for states, events, actions, guards, and services.
+Explicit Event Handlers: Define explicit event handlers (on: { EVENT_NAME: ... }) for all expected user interactions and system events. Use distinct and meaningful event names.
+Global Event Handlers (on: {"*": ...}): Use root-level global event handlers (on: {"*": ...}) sparingly, primarily for debugging, global concerns like session timeouts, or critical audit logging, as they can add noise or unintended side effects.
+Actions, Guards, and Services:
+Explicit Definitions: Explicitly define all actions, guards, and services in the machine's implementation options (the second argument to createMachine), even if they are simple (e.g., console logs initially). This improves readability, testability, and maintainability.
+Side Effects in Actions: Confine side effects (like API calls, logging, DOM manipulations) to actions or invoked services. Keep guards pure (returning only boolean).
+Data Validation: Implement data validation using guards (cond) or entry/exit actions before critical operations or state transitions.
+Modularity and Complexity:
+Sub-machines (Actors): For complex logic or reusable sub-flows, consider using invoked child machines (actors) to manage complexity and promote modularity.
+Error Handling and Resilience:
+Specific Error States: Instead of a single generic error state, consider more specific error states or error data in context to allow for targeted recovery or user feedback.
+Retry Logic: Implement retry mechanisms (e.g., with an attemptCount in context and conditional transitions) for transient errors in invoked services.
+Contextual Information:
+Status Fields: If using status fields for external systems (e.g., paymentStatusForAdmin), ensure they are updated consistently and accurately across all relevant state transitions.
+By following these guidelines, the resulting XState machine will be more robust, easier to understand, test, and maintain.
+
 ---
 ## 5. User Rules
 Custom Rules (if any):

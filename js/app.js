@@ -81,8 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'Создание требований',
             path: 'ai-boost-promts',
             promptTypes: [
-                { value: 'prompt1', display: 'Написание документации' },
-                { value: 'prompt2', display: 'Создание xstate машины' }
+                { value: 'prompt2', display: 'Создание xstate - TypeScript' },
+                { value: 'prompt3', display: 'Создание xstate - JSON' },
+                { value: 'prompt1', display: 'Ревью xstate машины' }
             ]
         }
     };
