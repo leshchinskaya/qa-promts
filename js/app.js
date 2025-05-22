@@ -73,6 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 { value: 'prompt2', display: 'Анализ нагрузки команды' },
                 { value: 'prompt3', display: 'Анализ общего качества на проекте' }
             ]
+        },
+        ai_boost_promts: {
+            name: 'Создание требований',
+            path: 'ai-boost-promts',
+            promptTypes: [
+                { value: 'prompt1', display: 'Написание документации' },
+                { value: 'prompt2', display: 'Создание xstate машины' }
+            ]
         }
     };
 
