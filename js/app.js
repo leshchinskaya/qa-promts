@@ -25,6 +25,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const generatedPromptCharCount = document.getElementById('generatedPromptCharCount');
 
+    // Elements for "New Checks Generator" tab
+    const newChecksGeneratorSection = document.getElementById('new-checks-generator-section');
+
+    const newChecksBusinessReqTextarea = document.getElementById('newChecksBusinessReqTextarea');
+    const newChecksXstateMachineTextarea = document.getElementById('newChecksXstateMachineTextarea');
+    const newChecksOtherReqTextarea = document.getElementById('newChecksOtherReqTextarea');
+    const newChecksCustomRulesTextarea = document.getElementById('newChecksCustomRulesTextarea'); // Renamed from newChecksCustomRulesForChecksTextarea for brevity
+
+    const newChecksBusinessReqFile = document.getElementById('newChecksBusinessReqFile');
+    const newChecksXstateMachineFile = document.getElementById('newChecksXstateMachineFile');
+    const newChecksOtherReqFile = document.getElementById('newChecksOtherReqFile');
+    const newChecksCustomRulesFile_newTab = document.getElementById('newChecksCustomRulesFile_newTab');
+
+    const clearNewChecksBusinessReqBtn = document.getElementById('clearNewChecksBusinessReqBtn');
+    const clearNewChecksXstateMachineBtn = document.getElementById('clearNewChecksXstateMachineBtn');
+    const clearNewChecksOtherReqBtn = document.getElementById('clearNewChecksOtherReqBtn');
+    const clearNewChecksCustomRulesBtn = document.getElementById('clearNewChecksCustomRulesBtn');
+
+    const newChecksGeneratedPromptTextarea = document.getElementById('newChecksGeneratedPromptTextarea');
+    const copyNewChecksBtn = document.getElementById('copyNewChecksBtn');
+    const newChecksCopyFeedback = document.getElementById('newChecksCopyFeedback');
+
+    // New elements for "Кастомные правила (опционально)" on New Checks Generator tab
+    const newChecksAdditionalCustomRulesTextarea = document.getElementById('newChecksAdditionalCustomRulesTextarea');
+    const newChecksAdditionalCustomRulesFile = document.getElementById('newChecksAdditionalCustomRulesFile');
+    const loadBaseRulesForNewChecksBtn = document.getElementById('loadBaseRulesForNewChecksBtn');
+    const clearNewChecksAdditionalCustomRulesBtn = document.getElementById('clearNewChecksAdditionalCustomRulesBtn');
+
     // Определяем темы и количество типов промптов для каждой
     const promptThemes = {
         requirements_analysis: {
@@ -438,6 +466,144 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderUserInputFileList(); // Скрыть блок при загрузке, если файлов нет
 
+    // --- New Checks Generator Logic ---
+    const newChecksPromptTemplatePath = 'prompts/new_check_generation/main_template.txt';
+
+    async function generateAndDisplayNewChecksPrompt() {
+        if (!newChecksGeneratorSection || newChecksGeneratorSection.style.display === 'none') return;
+
+        const businessReq = newChecksBusinessReqTextarea.value.trim();
+        const xstateMachine = newChecksXstateMachineTextarea.value.trim();
+        const otherReq = newChecksOtherReqTextarea.value.trim();
+        const customRulesForChecks = newChecksCustomRulesTextarea.value.trim();
+        const additionalCustomRules = newChecksAdditionalCustomRulesTextarea ? newChecksAdditionalCustomRulesTextarea.value.trim() : '';
+
+        try {
+            const response = await fetch(newChecksPromptTemplatePath);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status} for ${newChecksPromptTemplatePath}`);
+            }
+            let template = await response.text();
+
+            template = template.replace('{{BUSINESS_REQUIREMENTS}}', businessReq || 'None');
+            template = template.replace('{{XSTATE_MACHINE}}', xstateMachine || 'None');
+            template = template.replace('{{CUSTOM_RULES_FOR_CHECKS}}', customRulesForChecks || 'None');
+            template = template.replace('{{OTHER_REQUIREMENTS}}', otherReq || 'None');
+            template = template.replace('{{ADDITIONAL_CUSTOM_RULES}}', additionalCustomRules || 'None');
+
+            newChecksGeneratedPromptTextarea.value = template;
+        } catch (error) {
+            console.error('Error fetching or processing new checks prompt template:', error);
+            newChecksGeneratedPromptTextarea.value = `Ошибка: Не удалось загрузить или обработать шаблон промпта (${newChecksPromptTemplatePath}). ${error.message}`;
+        }
+    }
+
+    async function handleNewTabSingleFileUpload(event, targetTextarea, fileNameDisplayId, loadingIndicatorId) {
+        const fileInput = event.target;
+        const file = fileInput.files[0];
+        const fileNameDisplay = document.getElementById(fileNameDisplayId);
+        const loadingIndicator = document.getElementById(loadingIndicatorId);
+
+        if (!file) {
+            // If no file is selected (e.g., user cancels dialog), do nothing or clear previous.
+            // For now, let's not clear if they cancel, only if they upload a new file or click clear.
+            return;
+        }
+
+        fileNameDisplay.textContent = '';
+        loadingIndicator.textContent = 'Загрузка...';
+        loadingIndicator.style.display = 'inline';
+        loadingIndicator.style.color = '#007bff';
+
+        const fileName = file.name;
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+        const supportedExtensions = ['csv', 'pdf', 'docx', 'doc', 'txt', 'json']; // Added json for xstate
+
+        if (!supportedExtensions.includes(fileExtension)) {
+            loadingIndicator.textContent = `Ошибка: Неподдерживаемый тип файла (.${fileExtension}).`;
+            loadingIndicator.style.color = 'red';
+            fileNameDisplay.textContent = fileName; // Show problematic file name
+            fileInput.value = null; // Clear the input
+            return;
+        }
+
+        try {
+            let content = '';
+            if (fileExtension === 'txt' || fileExtension === 'json') {
+                content = await readFileAsText(file);
+            } else if (fileExtension === 'csv') {
+                content = parseCsvContent(await readFileAsText(file));
+            } else if (fileExtension === 'pdf') {
+                content = await parsePdfContent(await readFileAsArrayBuffer(file));
+            } else if (fileExtension === 'docx' || fileExtension === 'doc') {
+                content = await parseDocxContent(await readFileAsArrayBuffer(file), fileExtension);
+            }
+            targetTextarea.value = content.trim();
+            fileNameDisplay.textContent = fileName;
+            fileNameDisplay.style.display = 'block';
+            loadingIndicator.textContent = 'Загружено!';
+            setTimeout(() => { loadingIndicator.style.display = 'none'; }, 2000);
+            generateAndDisplayNewChecksPrompt();
+        } catch (error) {
+            console.error('Error processing file for new tab:', error);
+            loadingIndicator.textContent = `Ошибка: ${error.message || 'Не удалось обработать файл.'}`;
+            loadingIndicator.style.color = 'red';
+            fileNameDisplay.textContent = fileName; // Show problematic file name
+        }
+        // Do not reset fileInput.value here, so the name stays. Reset on clear.
+    }
+
+    function setupNewTabClearButton(clearButton, fileInput, targetTextarea, fileNameDisplayId, loadingIndicatorId) {
+        const fileNameDisplay = document.getElementById(fileNameDisplayId);
+        const loadingIndicator = document.getElementById(loadingIndicatorId);
+        clearButton.addEventListener('click', () => {
+            fileInput.value = null;
+            targetTextarea.value = '';
+            fileNameDisplay.textContent = '';
+            fileNameDisplay.style.display = 'none';
+            loadingIndicator.textContent = '';
+            loadingIndicator.style.display = 'none';
+            generateAndDisplayNewChecksPrompt();
+        });
+    }
+
+    // Event listeners for "New Checks Generator" tab inputs
+    [newChecksBusinessReqTextarea, newChecksXstateMachineTextarea, newChecksOtherReqTextarea, newChecksCustomRulesTextarea].forEach(textarea => {
+        textarea.addEventListener('input', debounce(generateAndDisplayNewChecksPrompt, 400));
+    });
+
+    newChecksBusinessReqFile.addEventListener('change', (e) => handleNewTabSingleFileUpload(e, newChecksBusinessReqTextarea, 'newChecksBusinessReqFileName', 'newChecksBusinessReqFileLoading'));
+    newChecksXstateMachineFile.addEventListener('change', (e) => handleNewTabSingleFileUpload(e, newChecksXstateMachineTextarea, 'newChecksXstateMachineFileName', 'newChecksXstateMachineFileLoading'));
+    newChecksOtherReqFile.addEventListener('change', (e) => handleNewTabSingleFileUpload(e, newChecksOtherReqTextarea, 'newChecksOtherReqFileName', 'newChecksOtherReqFileLoading'));
+    newChecksCustomRulesFile_newTab.addEventListener('change', (e) => handleNewTabSingleFileUpload(e, newChecksCustomRulesTextarea, 'newChecksCustomRulesFileName_newTab', 'newChecksCustomRulesFileLoading_newTab'));
+
+    // Event listeners for the new "Кастомные правила (опционально)" field on New Checks Generator tab
+    if (newChecksAdditionalCustomRulesFile && newChecksAdditionalCustomRulesTextarea) {
+        newChecksAdditionalCustomRulesFile.addEventListener('change', (e) => handleNewTabSingleFileUpload(e, newChecksAdditionalCustomRulesTextarea, 'newChecksAdditionalCustomRulesFileName', 'newChecksAdditionalCustomRulesFileLoading'));
+    }
+    if (clearNewChecksAdditionalCustomRulesBtn && newChecksAdditionalCustomRulesFile && newChecksAdditionalCustomRulesTextarea) {
+        setupNewTabClearButton(clearNewChecksAdditionalCustomRulesBtn, newChecksAdditionalCustomRulesFile, newChecksAdditionalCustomRulesTextarea, 'newChecksAdditionalCustomRulesFileName', 'newChecksAdditionalCustomRulesFileLoading');
+    }
+    if (loadBaseRulesForNewChecksBtn && newChecksAdditionalCustomRulesTextarea) {
+        loadBaseRulesForNewChecksBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('rules/base_rules.txt');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} for rules/base_rules.txt`);
+                }
+                const baseRulesText = await response.text();
+                newChecksAdditionalCustomRulesTextarea.value = newChecksAdditionalCustomRulesTextarea.value.trim() ? newChecksAdditionalCustomRulesTextarea.value + '\n' + baseRulesText : baseRulesText;
+                generateAndDisplayNewChecksPrompt();
+            } catch (error) {
+                console.error('Error loading base rules for new checks (additional):', error);
+                newChecksAdditionalCustomRulesTextarea.value = `Ошибка загрузки базовых правил: ${error.message}`;
+            }
+        });
+    }
+    if (newChecksAdditionalCustomRulesTextarea) {
+        newChecksAdditionalCustomRulesTextarea.addEventListener('input', debounce(generateAndDisplayNewChecksPrompt, 400));
+    }
+
     // --- Xray Importer Logic ---
     const jiraUrlInput = document.getElementById('jiraUrl');
     const jiraUsernameInput = document.getElementById('jiraUsername');
@@ -560,21 +726,53 @@ document.addEventListener('DOMContentLoaded', () => {
         const menuItems = document.querySelectorAll('.sidebar-menu-item');
         const promptSection = document.getElementById('prompt-generator-section');
         const xraySection = document.getElementById('xray-import-section');
+        // newChecksGeneratorSection is already defined globally
+
+        const sections = {
+            'prompt-generator': promptSection,
+            'new-checks-generator': newChecksGeneratorSection,
+            'xray-import': xraySection
+        };
+
         menuItems.forEach(item => {
             item.addEventListener('click', function() {
                 menuItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
-                if (this.dataset.section === 'prompt-generator') {
-                    promptSection.style.display = '';
-                    xraySection.style.display = 'none';
-                    promptSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                } else if (this.dataset.section === 'xray-import') {
-                    promptSection.style.display = 'none';
-                    xraySection.style.display = '';
-                    xraySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                const activeSectionName = this.dataset.section;
+
+                for (const sectionName in sections) {
+                    if (sections[sectionName]) { // Ensure section element exists
+                        sections[sectionName].style.display = (sectionName === activeSectionName) ? '' : 'none';
+                    }
+                }
+
+                if (sections[activeSectionName]) {
+                    sections[activeSectionName].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (activeSectionName === 'new-checks-generator') {
+                        generateAndDisplayNewChecksPrompt(); // Initial generation when tab becomes active
+                    } else if (activeSectionName === 'prompt-generator') {
+                        generateAndDisplayPrompt(); // Ensure prompt updates if returning to this tab
+                    }
                 }
             });
         });
     }
     setupSidebarMenu();
+
+    // Setup clear buttons for "New Checks Generator" tab
+    setupNewTabClearButton(clearNewChecksBusinessReqBtn, newChecksBusinessReqFile, newChecksBusinessReqTextarea, 'newChecksBusinessReqFileName', 'newChecksBusinessReqFileLoading');
+    setupNewTabClearButton(clearNewChecksXstateMachineBtn, newChecksXstateMachineFile, newChecksXstateMachineTextarea, 'newChecksXstateMachineFileName', 'newChecksXstateMachineFileLoading');
+    setupNewTabClearButton(clearNewChecksOtherReqBtn, newChecksOtherReqFile, newChecksOtherReqTextarea, 'newChecksOtherReqFileName', 'newChecksOtherReqFileLoading');
+    setupNewTabClearButton(clearNewChecksCustomRulesBtn, newChecksCustomRulesFile_newTab, newChecksCustomRulesTextarea, 'newChecksCustomRulesFileName_newTab', 'newChecksCustomRulesFileLoading_newTab');
+
+    // Copy button for "New Checks Generator" tab
+    copyNewChecksBtn.addEventListener('click', () => {
+        newChecksGeneratedPromptTextarea.select();
+        document.execCommand('copy');
+        newChecksCopyFeedback.style.display = 'block';
+        setTimeout(() => {
+            newChecksCopyFeedback.style.display = 'none';
+        }, 2000);
+    });
 });

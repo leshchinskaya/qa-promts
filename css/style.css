@@ -87,6 +87,13 @@ textarea {
     color: #212529;
 }
 
+#newChecksGeneratedPromptTextarea {
+    min-height: 220px; /* Adjusted height for potentially longer prompts */
+    background-color: #f8f9fa;
+    font-family: monospace, "Courier New", Courier;
+    color: #212529;
+}
+
 button {
     width: 100%;
     padding: 12px 20px;
@@ -630,4 +637,42 @@ button:hover {
     .container {
         padding: 20px;
     }
-} 
+}
+
+/* Styles for New Checks Generator Three-Column Layout */
+.new-checks-three-column-layout {
+    display: flex;
+    gap: 20px; /* As per plan example */
+}
+
+.new-checks-column {
+    flex: 1;
+    padding: 25px;
+    background-color: #fdfdfd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column; /* Stack form-groups vertically */
+}
+
+/* Ensure textareas in columns can grow */
+.new-checks-column .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.new-checks-column .form-group textarea {
+    flex-grow: 1; /* Allow textarea to fill available vertical space in its form-group */
+}
+
+/* Specific for column 3 to allow prompt textarea to grow significantly */
+.new-checks-column.column-3 .form-group#newChecksGeneratedPromptGroup { /* Add ID to target specifically */
+    flex-grow: 1;
+}
+
+@media (max-width: 768px) { /* Consistent with .main-layout breakpoint */
+    .new-checks-three-column-layout {
+        flex-direction: column;
+    }
+}
