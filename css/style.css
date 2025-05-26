@@ -435,19 +435,22 @@ button:hover {
 }
 .xray-importer-panel input[type="text"],
 .xray-importer-panel input[type="password"],
-.xray-importer-panel textarea {
+.xray-importer-panel textarea,
+.xray-importer-panel input[type="number"] {
     width: calc(100% - 24px);
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 6px;
     background: #fff;
+    box-sizing: border-box;
     font-size: 1em;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     margin-bottom: 0;
 }
 .xray-importer-panel input[type="text"]:focus,
 .xray-importer-panel input[type="password"]:focus,
-.xray-importer-panel textarea:focus {
+.xray-importer-panel textarea:focus,
+.xray-importer-panel input[type="number"]:focus {
     border-color: #007bff;
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.15);
     outline: 0;
@@ -526,6 +529,14 @@ button:hover {
     border: 1px solid #eee;
     padding: 22px 20px 18px 20px;
     margin-bottom: 22px;
+}
+
+.xray-section-block h3 {
+    font-size: 1.2em;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-weight: 600;
 }
 
 .monospace-output {
@@ -630,4 +641,32 @@ button:hover {
     .container {
         padding: 20px;
     }
-} 
+}
+
+.figma-importer-layout {
+    display: flex;
+    gap: 30px;
+}
+
+.figma-importer-parameters-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 22px; /* Расстояние между xray-section-block */
+}
+
+.figma-importer-results-panel {
+    flex: 1;
+}
+
+/* Responsive adjustments for the new Figma importer layout */
+@media (max-width: 900px) {
+    .figma-importer-layout {
+        flex-direction: column;
+    }
+    /* .figma-importer-parameters-panel and .figma-importer-results-panel
+       will naturally take full width due to flex: 1 and flex-direction: column
+       on their parent. No specific width/flex adjustments needed here for them,
+       but you could adjust their internal gaps or paddings if necessary.
+    */
+}

@@ -10,7 +10,8 @@
 <body>
     <div class="sidebar-menu">
         <div class="sidebar-menu-item active" data-section="prompt-generator">Сгенерировать промт</div>
-        <div class="sidebar-menu-item" data-section="xray-import">Импортировать проверки</div>
+        <div class="sidebar-menu-item" data-section="xray-import">Import проверок в Xray</div>
+        <div class="sidebar-menu-item" data-section="figma-test-generator">Import экранов из Figma в Xray</div>
     </div>
     <div class="container main-content">
         <div id="prompt-generator-section">
@@ -183,6 +184,78 @@ Test case 1 summary;Description for TC1;High;smoke,regression;Step 1 Action;Step
                               
                             
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="figma-test-generator-section" style="display:none;">
+            <h2>Импорт экранов из Figma в Xray (недоступно в pages)</h2>
+            <div class="xray-importer-panel figma-importer-layout" style="margin-top: 30px;">
+                <div class="figma-importer-parameters-panel">
+                    <!-- Block 1: Figma Parameters -->
+                    <div class="xray-section-block">
+                        <h3>Параметры Figma</h3>
+                        <div class="form-group">
+                            <label for="figmaFileUrl">Figma File URL:</label>
+                            <input type="text" id="figmaFileUrl" placeholder="https://www.figma.com/design/...">
+                        </div>
+                        <div class="form-group">
+                            <label for="figmaToken">Figma token:</label>
+                            <input type="password" id="figmaToken" placeholder="figd_...">
+                        </div>
+                     </div>
+
+                    <!-- Block 2: Jira Parameters -->
+                    <div class="xray-section-block">
+                        <h3>Параметры Jira</h3>
+                        <div class="form-group">
+                            <label for="figmaJiraUrl">Jira URL:</label>
+                            <input type="text" id="figmaJiraUrl" value="https://jira.surf.dev">
+                        </div>
+                        <div class="form-group">
+                            <label for="figmaJiraProjectKey">Project key:</label>
+                            <input type="text" id="figmaJiraProjectKey" value="SURFQA">
+                        </div>
+                        <div class="form-group">
+                            <label for="figmaJiraUsername">login:</label>
+                            <input type="text" id="figmaJiraUsername" placeholder="jira_login">
+                        </div>
+                        <div class="form-group">
+                            <label for="figmaJiraPassword">password:</label>
+                            <input type="password" id="figmaJiraPassword" placeholder="jira_password">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="figma-importer-results-panel">
+                    <!-- Block 3: Script Parameters -->
+                    <div class="xray-section-block">
+                        <h3>Дополнительные параметры</h3>
+                        <div class="form-group">
+                            <label for="figmaBannedElements">Исключить вхождения в названиях элементов (banned):</label>
+                            <input type="text" id="figmaBannedElements" value="frame, form, icon, local, label, pay, code" placeholder="frame, form, icon">
+                        </div>
+                        <div class="form-group">
+                            <label for="figmaFeatureName">Наименование фичи:</label>
+                            <input type="text" id="figmaFeatureName" placeholder="Опционально, например, 'Карточка товара'">
+                        </div>
+                        <div class="form-group">
+                            <label for="figmaScale">png scale:</label>
+                            <input type="number" id="figmaScale" value="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="figmaFrameLimit">tests limit:</label>
+                            <input type="number" id="figmaFrameLimit" value="20" min="1">
+                        </div>
+                     </div>
+                    <!-- Block 4: Output and Action -->
+                    <div class="xray-section-block">
+                        <h3>Результат выполнения</h3>
+                        <div class="form-group">
+                            <div id="figmaTestResultOutput" class="monospace-output" style="min-height: 200px;">Здесь будет результат выполнения скрипта...</div>
+                        </div>
+                        <span id="figmaScriptLoading" style="display:none; margin-left: 10px; color: #007bff;">Обработка...</span>
+                        <button id="runFigmaScriptBtn" class="copyBtn" style="margin-top: 10px;">Загрузить экраны в Xray</button>
                     </div>
                 </div>
             </div>

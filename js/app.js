@@ -451,6 +451,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadCsvFileBtn = document.getElementById('loadCsvFileBtn');
     const clearCsvFileBtn = document.getElementById('clearCsvFileBtn');
 
+    // --- Figma Test Generator Elements ---
+    const figmaFileUrlInput = document.getElementById('figmaFileUrl');
+    const figmaTokenInput = document.getElementById('figmaToken');
+    const figmaScaleInput = document.getElementById('figmaScale');
+    const figmaFrameLimitInput = document.getElementById('figmaFrameLimit');
+    const figmaJiraUrlInput = document.getElementById('figmaJiraUrl');
+    const figmaJiraUsernameInput = document.getElementById('figmaJiraUsername');
+    const figmaJiraPasswordInput = document.getElementById('figmaJiraPassword');
+    const figmaJiraProjectKeyInput = document.getElementById('figmaJiraProjectKey');
+    const figmaBannedElementsInput = document.getElementById('figmaBannedElements');
+    const figmaFeatureNameInput = document.getElementById('figmaFeatureName');
+    const figmaTestResultOutputDiv = document.getElementById('figmaTestResultOutput');
+    const runFigmaScriptBtn = document.getElementById('runFigmaScriptBtn');
+    const figmaScriptLoadingSpan = document.getElementById('figmaScriptLoading');
+
     // Установить значение по умолчанию для jiraUrl, если оно пустое
     if (jiraUrlInput && !jiraUrlInput.value) {
         jiraUrlInput.value = 'https://jira.surf.dev';
@@ -555,23 +570,104 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Figma Test Generator Logic ---
+    if (runFigmaScriptBtn) {
+        runFigmaScriptBtn.addEventListener('click', async () => {
+            const payload = {
+                figma_file_url: figmaFileUrlInput.value.trim(),
+                figma_token: figmaTokenInput.value, // Token might have spaces
+                figma_scale: parseInt(figmaScaleInput.value, 10) || 1,
+                frame_limit: parseInt(figmaFrameLimitInput.value, 10) || 20,
+                jira_url: figmaJiraUrlInput.value.trim(),
+                jira_username: figmaJiraUsernameInput.value.trim(),
+                jira_password: figmaJiraPasswordInput.value, // Password might have spaces
+                jira_project_key: figmaJiraProjectKeyInput.value.trim(),
+                banned_elements: figmaBannedElementsInput.value.trim(),
+                feature_name: figmaFeatureNameInput.value.trim()
+            };
+
+            const requiredFields = {
+                "FIGMA_FILE_URL": payload.figma_file_url,
+                "FIGMA_TOKEN": payload.figma_token,
+                "JIRA_URL": payload.jira_url,
+                "JIRA_USERNAME": payload.jira_username,
+                "JIRA_PASSWORD": payload.jira_password,
+                "JIRA_PROJECT_KEY": payload.jira_project_key
+            };
+
+            let missingFields = [];
+            for (const fieldName in requiredFields) {
+                if (!requiredFields[fieldName]) {
+                    missingFields.push(fieldName);
+                }
+            }
+
+            if (missingFields.length > 0) {
+                figmaTestResultOutputDiv.textContent = `Ошибка: Следующие обязательные поля не заполнены: ${missingFields.join(', ')}.`;
+                return;
+            }
+
+            figmaScriptLoadingSpan.style.display = 'inline';
+            runFigmaScriptBtn.disabled = true;
+            figmaTestResultOutputDiv.textContent = 'Выполняется запрос к серверу для генерации тестов из Figma...';
+
+            try {
+                const response = await fetch('http://localhost:5050/api/run-figma-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                let outputText = `--- STDOUT (Вывод скрипта) ---
+${result.stdout || '(пусто)'}\n\n`;
+                outputText += `--- STDERR (Ошибки выполнения) ---
+${result.stderr || '(пусто)'}\n`;
+                if (result.error) {
+                    outputText += `\n--- Ошибка сервера Flask ---
+${result.error}\n`;
+                }
+
+                const clickableOutput = makeJiraLinksClickable(outputText, payload.jira_url);
+                figmaTestResultOutputDiv.innerHTML = clickableOutput; // Use innerHTML for links
+
+            } catch (error) {
+                console.error('Error calling Figma script API:', error);
+                figmaTestResultOutputDiv.textContent = `Критическая ошибка при вызове API: ${error.message}\nУбедитесь, что бэкенд-сервер (Flask) запущен и доступен.`;
+            } finally {
+                figmaScriptLoadingSpan.style.display = 'none';
+                runFigmaScriptBtn.disabled = false;
+            }
+        });
+    }
+
     // Sidebar menu logic
     function setupSidebarMenu() {
         const menuItems = document.querySelectorAll('.sidebar-menu-item');
         const promptSection = document.getElementById('prompt-generator-section');
         const xraySection = document.getElementById('xray-import-section');
+        const figmaTestGeneratorSection = document.getElementById('figma-test-generator-section');
+
+        const sections = {
+            'prompt-generator': promptSection,
+            'xray-import': xraySection,
+            'figma-test-generator': figmaTestGeneratorSection
+        };
+
         menuItems.forEach(item => {
             item.addEventListener('click', function() {
                 menuItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
-                if (this.dataset.section === 'prompt-generator') {
-                    promptSection.style.display = '';
-                    xraySection.style.display = 'none';
-                    promptSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                } else if (this.dataset.section === 'xray-import') {
-                    promptSection.style.display = 'none';
-                    xraySection.style.display = '';
-                    xraySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                const activeSectionName = this.dataset.section;
+
+                for (const sectionName in sections) {
+                    if (sections[sectionName]) { // Check if element exists
+                        sections[sectionName].style.display = (sectionName === activeSectionName) ? '' : 'none';
+                    }
+                }
+                if (sections[activeSectionName]) {
+                    sections[activeSectionName].scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
