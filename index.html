@@ -10,6 +10,7 @@
 <body>
     <div class="sidebar-menu">
         <div class="sidebar-menu-item active" data-section="prompt-generator">Сгенерировать промт</div>
+        <div class="sidebar-menu-item" data-section="new-checks-generator">AI Boost: Автогенерация проверок</div>
         <div class="sidebar-menu-item" data-section="xray-import">Import проверок в Xray</div>
         <div class="sidebar-menu-item" data-section="figma-test-generator">Import экранов из Figma в Xray</div>
     </div>
@@ -119,6 +120,100 @@
                 </div>
             </div>
         </div>
+
+        <div id="new-checks-generator-section" style="display:none;">
+            <h2>AI Boost: Автогенерация проверок</h2>
+            <div class="new-checks-three-column-layout">
+                <div class="new-checks-column column-1">
+                    <!-- Бизнес-требования -->
+                    <div class="form-group">
+                        <label for="newChecksBusinessReqTextarea">Бизнес-требования:</label>
+                        <div class="file-upload-controls">
+                            <input type="file" id="newChecksBusinessReqFile" accept=".pdf,.doc,.docx,.csv,.txt" style="display:none;">
+                            <label for="newChecksBusinessReqFile" class="file-upload-btn load-base-rules-btn">Выберите файл</label>
+                            <button type="button" id="clearNewChecksBusinessReqBtn" class="clear-file-btn">Очистить</button>
+                            <span id="newChecksBusinessReqFileLoading" class="loading-indicator" style="display:none;"></span>
+                        </div>
+                        <span id="newChecksBusinessReqFileName" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
+                        <textarea id="newChecksBusinessReqTextarea" placeholder="Введите или загрузите бизнес-требования..."></textarea>
+                    </div>
+
+                    <!-- xstate машина -->
+                    <div class="form-group">
+                        <label for="newChecksXstateMachineTextarea">XState машина:</label>
+                        <div class="file-upload-controls">
+                            <input type="file" id="newChecksXstateMachineFile" accept=".pdf,.doc,.docx,.csv,.txt,.json" style="display:none;">
+                            <label for="newChecksXstateMachineFile" class="file-upload-btn load-base-rules-btn">Выберите файл</label>
+                            <button type="button" id="clearNewChecksXstateMachineBtn" class="clear-file-btn">Очистить</button>
+                            <span id="newChecksXstateMachineFileLoading" class="loading-indicator" style="display:none;"></span>
+                        </div>
+                        <span id="newChecksXstateMachineFileName" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
+                        <textarea id="newChecksXstateMachineTextarea" placeholder="Введите или загрузите описание xstate машины..."></textarea>
+                    </div>
+
+                    <!-- Прочие требования -->
+                    <div class="form-group">
+                        <label for="newChecksOtherReqTextarea">Прочие требования (UI, API, etc.):</label>
+                        <div class="file-upload-controls">
+                            <input type="file" id="newChecksOtherReqFile" accept=".pdf,.doc,.docx,.csv,.txt" style="display:none;">
+                            <label for="newChecksOtherReqFile" class="file-upload-btn load-base-rules-btn">Выберите файл</label>
+                            <button type="button" id="clearNewChecksOtherReqBtn" class="clear-file-btn">Очистить</button>
+                            <span id="newChecksOtherReqFileLoading" class="loading-indicator" style="display:none;"></span>
+                        </div>
+                        <span id="newChecksOtherReqFileName" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
+                        <textarea id="newChecksOtherReqTextarea" placeholder="Введите или загрузите прочие требования..."></textarea>
+                    </div>
+                </div>
+
+                <div class="new-checks-column column-2">
+                    <!-- Кастомные правила для проверок -->
+                    <div class="form-group">
+                        <label for="newChecksCustomRulesTextarea">Правила написания проверок:</label>
+                        <div class="file-upload-controls">
+                            <input type="file" id="newChecksCustomRulesFile_newTab" accept=".pdf,.doc,.docx,.csv,.txt" style="display:none;">
+                            <label for="newChecksCustomRulesFile_newTab" class="file-upload-btn load-base-rules-btn">Выберите файл</label>
+                            <button type="button" id="clearNewChecksCustomRulesBtn" class="clear-file-btn">Очистить</button>
+                            <span id="newChecksCustomRulesFileLoading_newTab" class="loading-indicator" style="display:none;"></span>
+                        </div>
+                        <span id="newChecksCustomRulesFileName_newTab" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
+                        <textarea id="newChecksCustomRulesTextarea" placeholder="Введите или загрузите кастомные правила для генерации проверок..."></textarea>
+                    </div>
+
+                    <!-- Кастомные правила (опционально): (НОВЫЙ) -->
+                    <div class="form-group">
+                        <label for="newChecksAdditionalCustomRulesTextarea">Кастомные правила (опционально):</label>
+                        <div class="file-upload-controls">
+                            <input type="file" id="newChecksAdditionalCustomRulesFile" accept=".pdf,.doc,.docx,.csv,.txt" style="display:none;">
+                            <label for="newChecksAdditionalCustomRulesFile" class="file-upload-btn load-base-rules-btn">Выберите файл</label>
+                            <button type="button" id="loadBaseRulesForNewChecksBtn" class="file-upload-btn load-base-rules-btn">Загрузить базовые правила</button>
+                            <button type="button" id="clearNewChecksAdditionalCustomRulesBtn" class="clear-file-btn">Очистить</button>
+                            <span id="newChecksAdditionalCustomRulesFileLoading" class="loading-indicator" style="display:none;"></span>
+                        </div>
+                        <span id="newChecksAdditionalCustomRulesFileName" class="file-name-display" style="display:block; margin-top:2px; margin-bottom:5px;"></span>
+                        <textarea id="newChecksAdditionalCustomRulesTextarea" placeholder="Введите или загрузите дополнительные кастомные правила..."></textarea>
+                    </div>
+                </div>
+
+                <div class="new-checks-column column-3">
+                    <div class="form-group" id="newChecksGeneratedPromptGroup">
+                        <label for="newChecksGeneratedPromptTextarea">Готовый промт:</label>
+                        <textarea id="newChecksGeneratedPromptTextarea" readonly placeholder="Здесь появится сгенерированный промпт..."></textarea>
+                    </div>
+                    <button id="copyNewChecksBtn">Копировать промт</button>
+                    <p id="newChecksCopyFeedback" style="text-align: center; color: green; display: none;">Скопировано!</p>
+                    <p style="margin-top: 10px; color: #555; font-size: 15px; text-align: left;">Скопируйте промт и переходите в чат, например:</p>
+                    <ul class="service-list" style="margin-top: 10px;">
+                        <li>Google AI Studio – <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer">https://aistudio.google.com/</a></li>
+                        <li>Grok – <a href="https://grok.com/" target="_blank" rel="noopener noreferrer">https://grok.com/</a></li>
+                        <li>ChatGPT – <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">https://chatgpt.com/</a></li>
+                        <li>Qwen – <a href="https://chat.qwen.ai/" target="_blank" rel="noopener noreferrer">https://chat.qwen.ai/</a></li>
+                        <li>DeepSeek – <a href="https://chat.deepseek.com/" target="_blank" rel="noopener noreferrer">https://chat.deepseek.com/</a></li>
+                        <li>Mistral – <a href="https://chat.mistral.ai/chat" target="_blank" rel="noopener noreferrer">https://chat.mistral.ai/chat</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <div id="xray-import-section" style="display:none;">
             <h2>Импорт тестов в Xray (недоступно в pages)</h2>
             <div class="xray-importer-panel" style="margin-top: 30px;">
@@ -191,7 +286,7 @@ Test case 1 summary;Description for TC1;High;smoke,regression;Step 1 Action;Step
         <div id="figma-test-generator-section" style="display:none;">
             <h2>Импорт экранов из Figma в Xray (недоступно в pages)</h2>
             <div class="xray-importer-panel figma-importer-layout" style="margin-top: 30px;">
-                <div class="figma-importer-parameters-panel">
+                <div class="figma-importer-left-panel">
                     <!-- Block 1: Figma Parameters -->
                     <div class="xray-section-block">
                         <h3>Параметры Figma</h3>
@@ -227,7 +322,7 @@ Test case 1 summary;Description for TC1;High;smoke,regression;Step 1 Action;Step
                     </div>
                 </div>
 
-                <div class="figma-importer-results-panel">
+                <div class="figma-importer-right-panel">
                     <!-- Block 3: Script Parameters -->
                     <div class="xray-section-block">
                         <h3>Дополнительные параметры</h3>
@@ -239,13 +334,15 @@ Test case 1 summary;Description for TC1;High;smoke,regression;Step 1 Action;Step
                             <label for="figmaFeatureName">Наименование фичи:</label>
                             <input type="text" id="figmaFeatureName" placeholder="Опционально, например, 'Карточка товара'">
                         </div>
-                        <div class="form-group">
-                            <label for="figmaScale">png scale:</label>
-                            <input type="number" id="figmaScale" value="1" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="figmaFrameLimit">tests limit:</label>
-                            <input type="number" id="figmaFrameLimit" value="20" min="1">
+                        <div class="figma-inline-fields">
+                            <div class="form-group">
+                                <label for="figmaScale">png scale:</label>
+                                <input type="number" id="figmaScale" value="1" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="figmaFrameLimit">tests limit:</label>
+                                <input type="number" id="figmaFrameLimit" value="20" min="1">
+                            </div>
                         </div>
                      </div>
                     <!-- Block 4: Output and Action -->
