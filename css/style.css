@@ -418,12 +418,12 @@ button:hover {
 }
 
 .xray-importer-panel {
-    background-color: #fdfdfd;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border: 1px solid #eee;
+    /* background-color: #fdfdfd; */
+    /* border-radius: 8px; */
+    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); */
+    /* border: 1px solid #eee; */
     padding: 25px 25px 30px 25px;
-    margin-top: 40px;
+    margin-top: 40px; /* Note: inline style in HTML for margin-top will override this for the elements */
     margin-bottom: 40px;
 }
 .xray-importer-panel h2 {
@@ -690,33 +690,48 @@ button:hover {
 
 .figma-importer-layout {
     display: flex;
+    flex-direction: column; /* Stack parameter block and columns vertically */
     gap: 30px;
 }
 
+/* Remove or comment out old panel styles if they are no longer directly used or conflict */
+/*
 .figma-importer-parameters-panel {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 22px; /* Расстояние между xray-section-block */
+    gap: 22px; 
 }
 
 .figma-importer-results-panel {
     flex: 1;
 }
 
-/* New styles for the two-column layout */
 .figma-importer-left-panel {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 22px; /* Consistent gap between blocks */
+    gap: 22px; 
 }
 
 .figma-importer-right-panel {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 22px; /* Consistent gap between blocks */
+    gap: 22px; 
+}
+*/
+
+.figma-bottom-columns-container {
+    display: flex;
+    gap: 30px; /* Gap between the two bottom columns */
+}
+
+.figma-additional-params-col,
+.figma-results-col {
+    flex: 1; /* Each column takes up half the space */
+    display: flex; /* To allow .xray-section-block to behave as intended within */
+    flex-direction: column; /* Stack content vertically within columns */
 }
 
 .figma-inline-fields {

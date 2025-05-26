@@ -218,6 +218,7 @@
             <h2>Импорт тестов в Xray (недоступно в pages)</h2>
             <div class="xray-importer-panel" style="margin-top: 30px;">
                 <div class="xray-section-block">
+                    <h3>Параметры Jira</h3>
                     <div class="jira-row-fields">
                         <div class="form-group">
                             <label for="jiraUrl">Jira URL:</label>
@@ -286,10 +287,10 @@ Test case 1 summary;Description for TC1;High;smoke,regression;Step 1 Action;Step
         <div id="figma-test-generator-section" style="display:none;">
             <h2>Импорт экранов из Figma в Xray (недоступно в pages)</h2>
             <div class="xray-importer-panel figma-importer-layout" style="margin-top: 30px;">
-                <div class="figma-importer-left-panel">
-                    <!-- Block 1: Figma Parameters -->
-                    <div class="xray-section-block">
-                        <h3>Параметры Figma</h3>
+                <!-- Row 1: Combined Figma and Jira Parameters -->
+                <div class="xray-section-block">
+                    <h3>Параметры Figma и Jira</h3>
+                    <div class="figma-inline-fields">
                         <div class="form-group">
                             <label for="figmaFileUrl">Figma File URL:</label>
                             <input type="text" id="figmaFileUrl" placeholder="https://www.figma.com/design/...">
@@ -298,18 +299,12 @@ Test case 1 summary;Description for TC1;High;smoke,regression;Step 1 Action;Step
                             <label for="figmaToken">Figma token:</label>
                             <input type="password" id="figmaToken" placeholder="figd_...">
                         </div>
-                     </div>
-
-                    <!-- Block 2: Jira Parameters -->
-                    <div class="xray-section-block">
-                        <h3>Параметры Jira</h3>
+                    </div>
+                    <hr style="margin: 20px 0; border-color: #eee;"> <!-- Visual separator -->
+                    <div class="figma-inline-fields">
                         <div class="form-group">
                             <label for="figmaJiraUrl">Jira URL:</label>
                             <input type="text" id="figmaJiraUrl" value="https://jira.surf.dev">
-                        </div>
-                        <div class="form-group">
-                            <label for="figmaJiraProjectKey">Project key:</label>
-                            <input type="text" id="figmaJiraProjectKey" value="SURFQA">
                         </div>
                         <div class="form-group">
                             <label for="figmaJiraUsername">login:</label>
@@ -322,37 +317,46 @@ Test case 1 summary;Description for TC1;High;smoke,regression;Step 1 Action;Step
                     </div>
                 </div>
 
-                <div class="figma-importer-right-panel">
-                    <!-- Block 3: Script Parameters -->
-                    <div class="xray-section-block">
-                        <h3>Дополнительные параметры</h3>
-                        <div class="form-group">
-                            <label for="figmaBannedElements">Исключить вхождения в названиях элементов (banned):</label>
-                            <input type="text" id="figmaBannedElements" value="frame, form, icon, local, label, pay, code" placeholder="frame, form, icon">
-                        </div>
-                        <div class="form-group">
-                            <label for="figmaFeatureName">Наименование фичи:</label>
-                            <input type="text" id="figmaFeatureName" placeholder="Опционально, например, 'Карточка товара'">
-                        </div>
-                        <div class="figma-inline-fields">
+                <!-- Row 2: Two Columns for Additional Params and Results -->
+                <div class="figma-bottom-columns-container">
+                    <div class="figma-additional-params-col">
+                        <div class="xray-section-block">
+                            <h3>Дополнительные параметры</h3>
                             <div class="form-group">
-                                <label for="figmaScale">png scale:</label>
-                                <input type="number" id="figmaScale" value="1" min="1">
+                                <label for="figmaBannedElements">Исключить вхождения в названиях элементов:</label>
+                                <input type="text" id="figmaBannedElements" value="frame, form, icon, local, label, pay, code" placeholder="frame, form, icon">
                             </div>
+                            <div class="figma-inline-fields">
+                                <div class="form-group">
+                                    <label for="figmaFeatureName">Наименование фичи:</label>
+                                    <input type="text" id="figmaFeatureName" placeholder="Карточка товара">
+                                </div>
+                                <div class="form-group">
+                                    <label for="figmaJiraProjectKey">Project key:</label>
+                                    <input type="text" id="figmaJiraProjectKey" value="SURFQA">
+                                </div>
+                            </div>
+                            <div class="figma-inline-fields" style="margin-top: 20px;">
+                                <div class="form-group">
+                                    <label for="figmaScale">png scale:</label>
+                                    <input type="number" id="figmaScale" value="1" min="1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="figmaFrameLimit">tests limit:</label>
+                                    <input type="number" id="figmaFrameLimit" value="20" min="1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="figma-results-col">
+                        <div class="xray-section-block">
+                            <h3>Результат выполнения</h3>
                             <div class="form-group">
-                                <label for="figmaFrameLimit">tests limit:</label>
-                                <input type="number" id="figmaFrameLimit" value="20" min="1">
+                                <div id="figmaTestResultOutput" class="monospace-output" style="min-height: 200px;">Здесь будет результат выполнения импорта и ссылки на созданные тесты</div>
                             </div>
+                            <span id="figmaScriptLoading" style="display:none; margin-left: 10px; color: #007bff;">Обработка...</span>
+                            <button id="runFigmaScriptBtn" class="copyBtn" style="margin-top: 10px;">Загрузить экраны в Xray</button>
                         </div>
-                     </div>
-                    <!-- Block 4: Output and Action -->
-                    <div class="xray-section-block">
-                        <h3>Результат выполнения</h3>
-                        <div class="form-group">
-                            <div id="figmaTestResultOutput" class="monospace-output" style="min-height: 200px;">Здесь будет результат выполнения скрипта...</div>
-                        </div>
-                        <span id="figmaScriptLoading" style="display:none; margin-left: 10px; color: #007bff;">Обработка...</span>
-                        <button id="runFigmaScriptBtn" class="copyBtn" style="margin-top: 10px;">Загрузить экраны в Xray</button>
                     </div>
                 </div>
             </div>
